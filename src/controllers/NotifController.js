@@ -1,0 +1,117 @@
+const axios = require('axios');
+const {
+    notif,
+    user
+} = require('../models');
+
+// whatsapp business api
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+module.exports = {
+    async sendNotif(req, res) {
+        const {
+            title,
+            message,
+            user_id
+        } = req.body;
+
+        try {
+            if (title === '' || message === '' || user_id === '') {
+                return res.status(400).json({
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                message: e.message
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                message: 'User not found'
+            });
+        }
+
+        try {
+            await notif.create({
+                title: title,
+                message: message,
+                user_id: user_id
+            });
+
+            // send whatsapp
+            client.messages
+                .create({
+                    from: 'whatsapp:+14155238886',
+                    body: `${title}\n${message}`,
+                    to: `whatsapp:+62${checkuser.phone}`
+                })
+                .then(message => console.log(message.sid))
+                .done();
+
+            return res.status(200).json({
+                message: 'Notif sent'
+            });
+        } catch (e) {
+            return res.status(500).json({
+                message: e.message
+            });
+        }
+    },
+
+    async getNotif(req, res) {
+        const {
+            user_id
+        } = req.body;
+
+        try {
+            if (user_id === '') {
+                return res.status(400).json({
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                message: e.message
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                message: 'User not found'
+            });
+        }
+
+        try {
+            const notifData = await notif.findAll({
+                where: {
+                    user_id: user_id
+                }
+            });
+
+            return res.status(200).json({
+                message: 'Notif found',
+                data: notifData
+            });
+        } catch (e) {
+            return res.status(500).json({
+                message: e.message
+            });
+        }
+    }
+}
