@@ -4,7 +4,7 @@ const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
 // auth routes
 AuthRoutes.get('/token-check', AuthMiddleware.checkToken, authController.tokenCheck);
-AuthRoutes.get('/device-check', AuthMiddleware.checkDevice, authController.checkUserFromUrlkeyDevice);
+AuthRoutes.get('/device-check', AuthMiddleware.deviceAuth, authController.checkUserFromUrlkeyDevice);
 AuthRoutes.get('/page-change-password/:token', authController.pageChangePassword);
 AuthRoutes.get('/verify/:token', authController.verify);
 AuthRoutes.post('/register', authController.signup);
