@@ -49,11 +49,12 @@ module.exports = {
 
     async changeUserProfile(req, res) {
         const {
-            user_id,
             username,
             email,
-            password
+            phone
         } = req.body;
+
+        const user_id = req.user.id;
 
         if (req.file) {
             const avatar = req.file.path;
@@ -74,7 +75,7 @@ module.exports = {
                 await user.update({
                     username: username,
                     email: email,
-                    password: password,
+                    phone: phone,
                     profile_image: avatar
                 }, {
                     where: {
@@ -108,8 +109,8 @@ module.exports = {
 
                 await user.update({
                     username: username,
+                    phone: phone,
                     email: email,
-                    password: password
                 }, {
                     where: {
                         id: user_id
@@ -275,5 +276,111 @@ module.exports = {
                 });
             }
         }
-    }
+    },
+
+    async activateUser(req, res) {
+        const {
+            user_id
+        } = req.body;
+
+        try {
+            if (user_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                status: 400,
+                message: 'User not found'
+            });
+        }
+
+        try {
+            await user.update({
+                is_activated: true
+            }, {
+                where: {
+                    id: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'User activated'
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async deactivateUser(req, res) {
+        const {
+            user_id
+        } = req.body;
+
+        try {
+            if (user_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                status: 400,
+                message: 'User not found'
+            });
+        }
+
+        try {
+            await user.update({
+                is_activated: false
+            }, {
+                where: {
+                    id: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'User deactivated'
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
 }

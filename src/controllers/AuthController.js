@@ -208,18 +208,22 @@ module.exports = {
         try {
             const verified = jwt.verify(token, process.env.JWT_SECRET);
 
-            await user.update({
-                status: 'active'
+            const update = await user.update({
+                is_verified: true
             }, {
                 where: {
                     email: verified.email
                 }
             });
 
-            return res.status(200).json({
-                status: 200,
-                message: 'Email verified'
-            });
+            if (update[0] === 0) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Account not found, Token not valid'
+                });
+            }
+
+            return res.render("verifEmail.ejs")
         } catch (e) {
             return res.status(500).json({
                 status: 500,
@@ -266,7 +270,7 @@ module.exports = {
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: 'Reset Password Sobermart',
+            subject: 'Reset Password Gas Detect',
             html: `<!DOCTYPE html> 
 <html>
     <center> 
@@ -316,6 +320,153 @@ module.exports = {
                     message: 'Email sent'
                 });
             }
+        });
+    },
+
+    async pageChangePassword(req, res) {
+        const token = req.params.token;
+
+        if (!token) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Invalid token'
+            });
+        }
+
+        try {
+            const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+            return res.render("resetPassword.ejs", {token: token});
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async resetPassword(req, res) {
+        const {
+            password,
+            repassword
+        } = req.body;
+
+        const token = req.params.token;
+
+        if (!token) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Invalid token'
+            });
+        }
+
+        if (password !== repassword) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Password not match'
+            });
+        }
+
+        try {
+            const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(password, salt);
+
+            const update = await user.update({
+                password: hashPassword
+            }, {
+                where: {
+                    email: verified.email
+                }
+            });
+
+            if (update[0] === 0) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Account not found, Token not valid'
+                });
+            }
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Password updated'
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async userChangePassword(req, res) {
+        const {
+            oldpassword,
+            newpassword,
+            renewpassword
+        } = req.body;
+
+        const user_id = req.user.id;
+
+        if (newpassword !== renewpassword) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Password not match'
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: user_id
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Account not found'
+            });
+        }
+
+        const validPass = await bcrypt.compare(oldpassword, checkuser.password);
+
+        if (!validPass) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Password not match'
+            });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newpassword, salt);
+
+        const update = await user.update({
+            password: hashPassword
+        }, {
+            where: {
+                id: user_id
+            }
+        });
+
+        if (update[0] === 0) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Account not found'
+            });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: 'Password updated'
+        });
+    },
+
+    async tokenCheck(req, res) {
+        return res.status(200).json({
+            status: 200,
+            username: req.user.name,
+            message: 'Token valid'
         });
     }
 }

@@ -1,5 +1,6 @@
 const {
     user,
+    device,
     Sequelize
 } = require("../models");
 
@@ -57,5 +58,32 @@ module.exports = {
         }
 
         next();
+    },
+
+    async deviceAuth(req, res, next) {
+        const key = req.headers['key'];
+        
+        if (!key) {
+            return res.status(401).send({
+                message: 'Key is required'
+            });
+        }
+
+        const deviceExists = await device.findOne({
+            where: {
+                urlkey: key
+                
+            }
+        });
+
+        if (!deviceExists) {
+            return res.status(401).send({
+                message: 'Invalid key'
+            });
+        }
+
+        req.device = deviceExists;
+        next();
+
     }
 }

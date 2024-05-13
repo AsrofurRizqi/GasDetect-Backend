@@ -20,11 +20,13 @@ module.exports = {
         try {
             if (title === '' || message === '' || user_id === '') {
                 return res.status(400).json({
+                    status: 400,
                     message: 'Please fill all field'
                 });
             }
         } catch (e) {
             return res.status(500).json({
+                status: 500,
                 message: e.message
             });
         }
@@ -37,6 +39,7 @@ module.exports = {
 
         if (!checkuser) {
             return res.status(400).json({
+                status: 400,
                 message: 'User not found'
             });
         }
@@ -59,16 +62,77 @@ module.exports = {
                 .done();
 
             return res.status(200).json({
+                status: 200,
                 message: 'Notif sent'
             });
         } catch (e) {
             return res.status(500).json({
+                status: 500,
                 message: e.message
             });
         }
     },
 
-    async getNotif(req, res) {
+    async getNotifUser(req, res) {
+        const user_id = req.user.id;
+
+        try {
+            const notifData = await notif.findAll({
+                where: {
+                    user_id: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Notif found',
+                data: notifData
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async verifyNumber(req, res) {
+        const {
+            phone
+        } = req.body;
+
+        try {
+            if (phone === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        try {
+            const response = await axios.get(`https://api.whatsapp.com/send?phone=${phone}`);
+
+            if (response.status === 200) {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Number verified'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async getNotifByUser(req, res) {
         const {
             user_id
         } = req.body;
@@ -76,11 +140,13 @@ module.exports = {
         try {
             if (user_id === '') {
                 return res.status(400).json({
+                    status: 400,
                     message: 'Please fill all field'
                 });
             }
         } catch (e) {
             return res.status(500).json({
+                status: 500,
                 message: e.message
             });
         }
@@ -93,6 +159,7 @@ module.exports = {
 
         if (!checkuser) {
             return res.status(400).json({
+                status: 400,
                 message: 'User not found'
             });
         }
@@ -105,13 +172,16 @@ module.exports = {
             });
 
             return res.status(200).json({
+                status: 200,
                 message: 'Notif found',
                 data: notifData
             });
         } catch (e) {
             return res.status(500).json({
+                status: 500,
                 message: e.message
             });
         }
     }
+
 }
