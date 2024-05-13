@@ -5,13 +5,35 @@ const {
 } = require("../models");
 
 const op = Sequelize.Op;
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     async checkToken(req, res, next) {
-        const token = req.headers['authorization'];
+        let token = req.headers['authorization'];
         if (!token) {
             return res.status(401).send({
                 message: 'Token is required'
+            });
+        }
+
+        try {
+            const bearer = token.split(' ');
+            if (bearer.length !== 2) {
+                return res.status(401).send({
+                    message: 'Invalid token, token must be in format Bearer <token>'
+                });
+            }
+
+            if (bearer[0] !== 'Bearer') {
+                return res.status(401).send({
+                    message: 'Invalid token, token must be in format Bearer <token>'
+                });
+            }
+
+            token = bearer[1];
+        } catch (error) {
+            return res.status(401).send({
+                message: 'Invalid token, token must be in format Bearer <token>'
             });
         }
 
@@ -23,10 +45,9 @@ module.exports = {
                 message: 'Invalid token'
             });
         }
-
         const userExists = await user.findOne({
             where: {
-                email : req.user.email
+                id : req.user.id
             }
         });
 

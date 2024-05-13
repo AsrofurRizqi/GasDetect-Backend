@@ -6,6 +6,7 @@ const {
 
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
     async getData(req, res) {
@@ -185,7 +186,7 @@ module.exports = {
         }
     },
 
-    async insertData(req, res) {
+    async insertDataDevice(req, res) {
         const {
             suhu,
             kelembapan,
@@ -224,6 +225,7 @@ module.exports = {
 
         try {
             await data.create({
+                id: uuidv4(),
                 suhu: suhu,
                 kelembapan: kelembapan,
                 ph: ph,
@@ -237,6 +239,69 @@ module.exports = {
                 message: 'Data saved'
             });
         } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async insertDataAdmin(req, res) {
+        const {
+            suhu,
+            kelembapan,
+            ph,
+            turbidity,
+            userId,
+            deviceId
+        } = req.body;
+
+        try {
+            if (suhu === '' || kelembapan === '' || ph === '' || turbidity === '' || userId === '' || deviceId === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkuser = await user.findOne({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!checkuser) {
+            return res.status(400).json({
+                status: 400,
+                message: 'User not found'
+            });
+        }
+
+        try {
+
+            await data.create({
+                id: uuidv4(),
+                suhu: suhu,
+                kelembapan: kelembapan,
+                ph: ph,
+                turbidity: turbidity,
+                userId: userId,
+                deviceId: deviceId
+            });
+
+            return res.status(201).json({
+                status: 201,
+                message: 'Data saved'
+            });
+        }
+        catch (e) {
             return res.status(500).json({
                 status: 500,
                 message: e.message
@@ -350,6 +415,24 @@ module.exports = {
                 message: 'Data deleted'
             });
         } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async getAllData(req, res) {
+        try {
+            const dataAll = await data.findAll();
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Data found',
+                data: dataAll,
+            });
+        }
+        catch (e) {
             return res.status(500).json({
                 status: 500,
                 message: e.message

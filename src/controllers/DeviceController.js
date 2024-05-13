@@ -5,7 +5,7 @@ const {
 } = require('../models');
 
 const Op = Sequelize.Op;
-const {v4: uuid} = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
 
 function keyRandom() {
@@ -69,10 +69,10 @@ module.exports = {
 
         try {
             const createDev = await device.create({
-                device_name: device_name,
+                deviceName: device_name,
                 deviceNumber: nextNumber,
-                device_id: uuid(),
-                user_id: user_id,
+                id: uuidv4(),
+                userId: user_id,
                 urlkey: keyRandom()
             });
 
@@ -210,6 +210,111 @@ module.exports = {
                 status: 200,
                 message: 'Device found',
                 data: deviceData
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async adminDeleteDevice(req, res) {
+        const {
+            device_id
+        } = req.params;
+
+        try {
+            if (device_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                deviceId: device_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        try {
+            await device.destroy({
+                where: {
+                    deviceId: device_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Device deleted'
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async adminUpdateDevice(req, res) {
+        const {
+            device_id,
+            device_name
+        } = req.body;
+
+        try {
+            if (device_id === '' || device_name === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                deviceId: device_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        try {
+            await device.update({
+                device_name: device_name
+            }, {
+                where: {
+                    deviceId: device_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Device updated'
             });
         } catch (e) {
             return res.status(500).json({

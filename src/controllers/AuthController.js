@@ -1,5 +1,6 @@
 const {
     user,
+    device,
     Sequelize
 } = require('../models');
 
@@ -7,6 +8,7 @@ const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const NodeMailer = require('nodemailer');
+const {v4: uuidv4} = require('uuid');
 
 module.exports = {
     async signup(req, res) {
@@ -46,7 +48,7 @@ module.exports = {
         if (checkuser) {
             return res.status(400).json({
                 status: 400,
-                message: 'Email already exist'
+                message: 'Email already used'
             });
         }
 
@@ -57,12 +59,13 @@ module.exports = {
             const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '2h'}, { algorithm: 'RS256' });
 
             await user.create({
+                id: uuidv4(),
                 username: nama,
                 email: email,
                 password: hashPassword,
                 is_verified: false,
                 is_activated: false,
-                avatar: 'https://res.cloudinary.com/dkxt6mlnh/image/upload/v1682927959/drown/images-removebg-preview_nmbyo7.png',
+                avatar: '',
                 role: 'user',
                 phone: '0',
             });
@@ -125,7 +128,7 @@ module.exports = {
                 } else {
                     return res.status(200).json({
                         status: 200,
-                        message: 'Email sent'
+                        message: 'Account created, please verify your email'
                     });
                 }
             });
@@ -175,16 +178,31 @@ module.exports = {
                 });
             }
 
+            if (!checkuser.is_verified) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please verify your email'
+                });
+            }
+
+            if (!checkuser.is_activated) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please contact admin to activate your account'
+                });
+            }
+
             const payload = {
                 id: checkuser.id,
                 name: checkuser.name,
             }
     
-            const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '7d'});
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '7d'}, { algorithm: 'RS256' });
     
             return res.status(200).json({
                 status: 200,
                 message: 'Login success',
+                role: checkuser.role,
                 token: token
             });
         } catch (e) {
@@ -207,6 +225,16 @@ module.exports = {
 
         try {
             const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+            const checkAlreadyVerified = await user.findOne({
+                where: {
+                    email: verified.email
+                }
+            });
+
+            if (checkAlreadyVerified.is_verified) {
+                return res.render("alreadyEmail.ejs")
+            }
 
             const update = await user.update({
                 is_verified: true
@@ -468,5 +496,53 @@ module.exports = {
             username: req.user.name,
             message: 'Token valid'
         });
+    },
+
+    async checkUserFromUrlkeyDevice(req, res) {
+        try {
+            const urlkey = req.headers['url-key']
+
+            if (!urlkey) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Invalid urlkey'
+                });
+            }
+
+            const checkDevice = await device.findOne({
+                where: {
+                    urlkey: urlkey
+                }
+            });
+
+            if (!checkDevice) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Device not found'
+                });
+            }
+
+            const checkUser = await user.findOne({
+                where: {
+                    id: checkDevice.user_id
+                }
+            });
+
+            if (!checkUser) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'User not found'
+                });
+            }
+
+            return res.status(200).json({
+                user: checkUser.username
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: "Internal Error"
+            });
+        }
     }
 }

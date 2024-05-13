@@ -5,15 +5,17 @@ module.exports = {
     await queryInterface.createTable('devices', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID
       },
       userId: {
         type: Sequelize.UUID
       },
       deviceNumber: {
         type: Sequelize.INTEGER
+      },
+      deviceName: {
+        type: Sequelize.STRING
       },
       active: {
         type: Sequelize.BOOLEAN
