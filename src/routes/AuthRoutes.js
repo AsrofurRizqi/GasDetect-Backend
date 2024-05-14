@@ -11,7 +11,7 @@ AuthRoutes.post('/register', authController.signup);
 AuthRoutes.post('/login', authController.signin);
 AuthRoutes.post('/forgot-password', authController.forgotPassword);
 AuthRoutes.post('/reset-password/:token', authController.resetPassword);
-AuthRoutes.post('/user-change-password', AuthMiddleware.checkToken, authController.userChangePassword);
+AuthRoutes.post('/user-change-password', AuthMiddleware.checkToken, AuthMiddleware.checkUser, authController.userChangePassword);
 
 // admin routes
 

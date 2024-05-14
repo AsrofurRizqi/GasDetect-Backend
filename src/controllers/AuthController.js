@@ -500,31 +500,11 @@ module.exports = {
 
     async checkUserFromUrlkeyDevice(req, res) {
         try {
-            const urlkey = req.headers['url-key']
-
-            if (!urlkey) {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Invalid urlkey'
-                });
-            }
-
-            const checkDevice = await device.findOne({
-                where: {
-                    urlkey: urlkey
-                }
-            });
-
-            if (!checkDevice) {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Device not found'
-                });
-            }
+            const user_id = req.device.userId;
 
             const checkUser = await user.findOne({
                 where: {
-                    id: checkDevice.user_id
+                    id: user_id
                 }
             });
 

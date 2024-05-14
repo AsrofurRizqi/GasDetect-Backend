@@ -2,7 +2,7 @@ const NotifRoutes = require('express').Router();
 const NotifController = require('../controllers/NotifController');
 const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
-NotifRoutes.get('/', NotifController.getNotifUser);
+NotifRoutes.get('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, NotifController.getNotifUser);
 NotifRoutes.post('/', NotifController.sendNotif);
 
 // admin

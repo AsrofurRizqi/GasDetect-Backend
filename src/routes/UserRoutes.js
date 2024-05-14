@@ -5,7 +5,7 @@ const UploadMiddleware = require('../middlewares/UploadMiddleware');
 
 // user routes
 UserRoutes.get('/profiles', AuthMiddleware.checkToken, AuthMiddleware.checkUser, UserController.getUserProfile);
-UserRoutes.put('/update', AuthMiddleware.checkToken, UploadMiddleware.singleUpload, AuthMiddleware.checkUser, UserController.changeUserProfile);
+UserRoutes.put('/update', AuthMiddleware.checkToken, AuthMiddleware.checkUser, UploadMiddleware.singleUpload, AuthMiddleware.checkUser, UserController.changeUserProfile);
 
 // admin routes
 UserRoutes.get('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.getAllUser);

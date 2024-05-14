@@ -92,14 +92,25 @@ module.exports = {
 
         const deviceExists = await device.findOne({
             where: {
-                urlkey: key
-                
+                urlkey: key       
             }
         });
 
         if (!deviceExists) {
             return res.status(401).send({
                 message: 'Invalid key'
+            });
+        }
+
+        const userExists = await user.findOne({
+            where: {
+                id: deviceExists.userId
+            }
+        });
+
+        if (!userExists) {
+            return res.status(401).send({
+                message: 'Invalid key, user owner not found'
             });
         }
 

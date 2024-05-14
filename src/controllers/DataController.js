@@ -188,19 +188,25 @@ module.exports = {
 
     async insertDataDevice(req, res) {
         const {
-            suhu,
-            kelembapan,
-            ph,
-            turbidity,
-            userId,
-            deviceId
+            timestamp,
+            ppm,
+            temperature,
+            humidity,
+            latitude,
+            longitude,
+            level,
         } = req.body;
 
+        const {
+            id,
+            userId
+        } = req.device;
+
         try {
-            if (suhu === '' || kelembapan === '' || ph === '' || turbidity === '' || userId === '' || deviceId === '') {
+            if (timestamp === '' || ppm === '' || temperature === '' || humidity === '' || latitude === '' || longitude === '' || level === '') {
                 return res.status(400).json({
                     status: 400,
-                    message: 'Please fill all field'
+                    message: 'Please fill all data field'
                 });
             }
         } catch (e) {
@@ -210,28 +216,32 @@ module.exports = {
             });
         }
 
-        const checkuser = await user.findOne({
-            where: {
-                id: userId
-            }
-        });
-
-        if (!checkuser) {
-            return res.status(400).json({
-                status: 400,
-                message: 'User not found'
-            });
-        }
-
         try {
+            let status
+            if (level == 0) {
+                status = 'Normal'
+            }
+            else if (level == 1) {
+                status = 'Warning'
+            }
+            else if (level == 2) {
+                status = 'Danger'
+            }
+            else {
+                status = 'Critical'
+            }
+
             await data.create({
                 id: uuidv4(),
-                suhu: suhu,
-                kelembapan: kelembapan,
-                ph: ph,
-                turbidity: turbidity,
                 userId: userId,
-                deviceId: deviceId
+                deviceId: id,
+                timestamp: timestamp,
+                ppm: ppm,
+                temperature: temperature,
+                humidity: humidity,
+                location: `${latitude},${longitude}`,
+                level: level,
+                status: status
             });
 
             return res.status(201).json({

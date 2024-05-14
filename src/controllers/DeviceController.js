@@ -54,7 +54,7 @@ module.exports = {
 
         const deviceNumber = await device.count({
             where: {
-                user_id: user_id
+                userId: user_id
             }
         });
 
@@ -73,7 +73,8 @@ module.exports = {
                 deviceNumber: nextNumber,
                 id: uuidv4(),
                 userId: user_id,
-                urlkey: keyRandom()
+                urlkey: keyRandom(),
+                active: true
             });
 
             return res.status(201).json({
@@ -113,7 +114,7 @@ module.exports = {
 
         const checkdevice = await device.findOne({
             where: {
-                deviceId: device_id,
+                id: device_id,
                 userId: user_id
             }
         });
@@ -128,14 +129,14 @@ module.exports = {
         try {
             await device.destroy({
                 where: {
-                    deviceId: device_id,
+                    id: device_id,
                     userId: user_id
                 }
             });
 
             return res.status(200).json({
                 status: 200,
-                message: 'Device deleted'
+                message: 'Device successfully deleted'
             });
         } catch (e) {
             return res.status(500).json({
@@ -151,7 +152,7 @@ module.exports = {
         try {
             const deviceData = await device.findAll({
                 where: {
-                    user_id: user_id
+                    userId: user_id
                 }
             });
 
@@ -163,7 +164,7 @@ module.exports = {
         } catch (e) {
             return res.status(500).json({
                 status: 500,
-                message: e.message
+                message: 'Internal server error'
             });
         }
     },
@@ -202,7 +203,7 @@ module.exports = {
         try {
             const deviceData = await device.findAll({
                 where: {
-                    user_id: user_id
+                    userId: user_id
                 }
             });
 

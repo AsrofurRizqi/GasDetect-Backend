@@ -9,23 +9,7 @@ const {v4: uuid} = require('uuid');
 
 module.exports = {
     async getUserProfile(req, res) {
-        const {
-            user_id
-        } = req.body;
-
-        try {
-            if (user_id === '') {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Please fill all field'
-                });
-            }
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e.message
-            });
-        }
+        const user_id = req.user.id;
 
         const checkuser = await user.findOne({
             where: {
@@ -39,6 +23,8 @@ module.exports = {
                 message: 'User not found'
             });
         }
+
+        checkuser.password = undefined;
 
         return res.status(200).json({
             status: 200,
@@ -133,6 +119,9 @@ module.exports = {
     async getAllUser(req, res) {
         try {
             const users = await user.findAll();
+            users.map((user) => {
+                user.password = undefined;
+            });
             return res.status(200).json({
                 status: 200,
                 message: 'All users',
