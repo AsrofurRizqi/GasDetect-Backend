@@ -7,6 +7,7 @@ const {
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
+const { or } = require('sequelize');
 
 function keyRandom() {
     let key = '';
@@ -153,7 +154,10 @@ module.exports = {
             const deviceData = await device.findAll({
                 where: {
                     userId: user_id
-                }
+                },
+                order: [
+                    ['deviceNumber', 'ASC']
+                ]
             });
 
             return res.status(200).json({
@@ -204,7 +208,10 @@ module.exports = {
             const deviceData = await device.findAll({
                 where: {
                     userId: user_id
-                }
+                },
+                order: [
+                    ['deviceNumber', 'ASC']
+                ]
             });
 
             return res.status(200).json({

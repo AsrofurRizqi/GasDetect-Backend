@@ -118,7 +118,11 @@ module.exports = {
 
     async getAllUser(req, res) {
         try {
-            const users = await user.findAll();
+            const users = await user.findAll({
+                order: [
+                    ['createdAt', 'ASC']
+                ]
+            });
             users.map((user) => {
                 user.password = undefined;
             });

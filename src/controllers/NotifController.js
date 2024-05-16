@@ -80,7 +80,10 @@ module.exports = {
             const notifData = await notif.findAll({
                 where: {
                     user_id: user_id
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             return res.status(200).json({

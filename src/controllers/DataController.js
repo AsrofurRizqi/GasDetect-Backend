@@ -50,7 +50,10 @@ module.exports = {
             const dataByUser = await data.findAll({
                 where: {
                     userId: user_id
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             let dataGroup = {};
@@ -117,7 +120,10 @@ module.exports = {
                     createdAt: {
                         [Op.between]: [start_date, end_date]
                     }
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             return res.status(200).json({
@@ -169,7 +175,10 @@ module.exports = {
                 where: {
                     userId: user_id,
                     deviceId: deviceId
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             return res.status(200).json({
@@ -434,7 +443,11 @@ module.exports = {
 
     async getAllData(req, res) {
         try {
-            const dataAll = await data.findAll();
+            const dataAll = await data.findAll({
+                order: [
+                    ['createdAt', 'DESC']
+                ]
+            });
 
             return res.status(200).json({
                 status: 200,
