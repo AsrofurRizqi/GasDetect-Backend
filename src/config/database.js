@@ -8,7 +8,7 @@ module.exports={
     "dialect": "postgres",
     "timezone": "+07:00",
     "dialectOptions": {
-      timezone: 'local'
+      useUTC: false
     },
   },
   "test": {
