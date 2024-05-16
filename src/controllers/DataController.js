@@ -461,5 +461,146 @@ module.exports = {
                 message: e.message
             });
         }
+    },
+
+    async getDataByUserId(req, res) {
+        const user_id = req.params.user_id;
+
+        try {
+            if (user_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        try {
+            const dataByUser = await data.findAll({
+                where: {
+                    userId: user_id
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
+            });
+
+            if (!dataByUser) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Data not found'
+                });
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Data found',
+                    data: dataByUser,
+                });
+            }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async getDataByDeviceId(req, res) {
+        const deviceId = req.params.device_id;
+
+        try {
+            if (deviceId === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        try {
+            const dataByDevice = await data.findAll({
+                where: {
+                    deviceId: deviceId
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
+            });
+
+            if (!dataByDevice) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Data not found'
+                });
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Data found',
+                    data: dataByDevice,
+                });
+            }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async getDataDetails(req, res) {
+        const data_id = req.params.data_id;
+
+        try {
+            if (data_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        try {
+            const dataDetails = await data.findOne({
+                where: {
+                    id: data_id
+                }
+            });
+
+            if (!dataDetails) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Data not found'
+                });
+            } else {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Data found',
+                    data: dataDetails,
+                });
+            }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
     }
 }

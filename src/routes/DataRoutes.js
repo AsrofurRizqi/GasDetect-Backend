@@ -10,6 +10,10 @@ DataRoutes.get('/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.c
 DataRoutes.post('/', AuthMiddleware.deviceAuth, DataController.insertDataDevice);
 
 // admin
+DataRoutes.get('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.getAllData);
+DataRoutes.get('/admin/details/:data_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.getDataDetails);
+DataRoutes.get('/admin/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.getDataByDeviceId);
+DataRoutes.get('/admin/user/:user_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.getDataByUserId);
 DataRoutes.post('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.insertDataAdmin);
 DataRoutes.delete('/admin/date', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.deleteDataByDateRange);
 DataRoutes.delete('/admin/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.deleteAllDataByDeviceId);

@@ -160,10 +160,64 @@ module.exports = {
                 ]
             });
 
+            deviceData.forEach((item) => {
+                delete item.dataValues.urlkey;
+                delete item.dataValues.userId;
+                delete item.dataValues.id;
+            });
+
             return res.status(200).json({
                 status: 200,
                 message: 'Device found',
                 data: deviceData
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error'
+            });
+        }
+    },
+
+    async getDeviceDetailsUser(req, res) {
+        const {
+            device_id
+        } = req.params;
+        const user_id = req.user.id;
+
+        try {
+            if (device_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                id: device_id,
+                userId: user_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        try {
+            return res.status(200).json({
+                status: 200,
+                message: 'Device found',
+                data: checkdevice
             });
         } catch (e) {
             return res.status(500).json({
