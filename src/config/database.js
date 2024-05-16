@@ -5,7 +5,11 @@ module.exports={
     "password": "123",
     "database": "test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "timezone": "+07:00",
+    "dialectOptions": {
+      timezone: 'local'
+    },
   },
   "test": {
     "username": "root",
@@ -17,12 +21,14 @@ module.exports={
   "production": {
     use_env_variable: 'DATABASE_URL',
     dialect: "postgress",
+    timezone: "+07:00",
     protocol: "postgress",
     dialectOptions: {
       ssl : {
         require : true,
         rejectUnauthorized : false
-      }
+      },
+      timezone: 'local'
     }
   }
 }
