@@ -14,4 +14,7 @@ DataRoutes.post('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, D
 DataRoutes.delete('/admin/date', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.deleteDataByDateRange);
 DataRoutes.delete('/admin/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DataController.deleteAllDataByDeviceId);
 
+//test routes
+DataRoutes.get('/test', DataController.getAllData);
+
 module.exports = DataRoutes;

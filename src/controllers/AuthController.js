@@ -88,7 +88,7 @@ module.exports = {
         <h1>Email Verification For User Account ${nama}</h1>
         <p>Click this link to verify your email, valid for 2 hours</p>
         <div>
-            <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1691564307/sobermart/sob-logos-1_bnnccj.png" alt="Drown Logo" width="310" height="85">
+            <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
         </div>
         <button 
             style=
