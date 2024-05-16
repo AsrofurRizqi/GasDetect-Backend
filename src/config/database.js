@@ -6,7 +6,7 @@ module.exports={
     "database": "test",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "timezone": "+07:00",
+    "timezone": "Asia/Jakarta",
     "dialectOptions": {
       useUTC: false
     },
