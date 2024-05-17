@@ -8,6 +8,7 @@ DeviceRoutes.post('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, Devi
 DeviceRoutes.delete('/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkUser,DeviceController.deleteDeviceUser);
 
 // admin
+DeviceRoutes.get('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DeviceController.getAllDevice);
 DeviceRoutes.get('/admin/user/:user_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DeviceController.getDeviceByUser);
 DeviceRoutes.delete('/admin/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DeviceController.adminDeleteDevice);
 DeviceRoutes.put('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, DeviceController.adminUpdateDevice);

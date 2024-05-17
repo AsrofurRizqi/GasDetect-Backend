@@ -440,7 +440,7 @@ module.exports = {
         if (newpassword !== renewpassword) {
             return res.status(400).json({
                 status: 400,
-                message: 'Password not match'
+                message: 'Password not match on new password and renew password'
             });
         }
 
@@ -462,7 +462,7 @@ module.exports = {
         if (!validPass) {
             return res.status(400).json({
                 status: 400,
-                message: 'Password not match'
+                message: 'Password account not match'
             });
         }
 

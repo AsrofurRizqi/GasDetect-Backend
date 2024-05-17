@@ -94,9 +94,9 @@ module.exports = {
                 }
 
                 await user.update({
-                    username: username,
-                    phone: phone,
-                    email: email,
+                    username: username ? username : user.username,
+                    phone: phone ? phone : user.phone,
+                    email: email ? email : user.email
                 }, {
                     where: {
                         id: user_id
@@ -376,4 +376,36 @@ module.exports = {
             });
         }
     },
+
+    async getUserById(req, res) {
+        try {
+            const user_id = req.params.id;
+
+            const checkuser = await user.findOne({
+                where: {
+                    id: user_id
+                }
+            });
+
+            if (!checkuser) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'User not found'
+                });
+            }
+
+            checkuser.password = undefined;
+
+            return res.status(200).json({
+                status: 200,
+                message: 'User found',
+                data: checkuser
+            });
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    }
 }

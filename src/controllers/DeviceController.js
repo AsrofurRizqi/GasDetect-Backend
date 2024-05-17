@@ -384,5 +384,27 @@ module.exports = {
                 message: e.message
             });
         }
+    },
+
+    async getAllDevice(req, res) {
+        try {
+            const deviceData = await device.findAll({
+                order: [
+                    ['userId', 'ASC'],
+                ]
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Device found',
+                data: deviceData
+            });
+            
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error'
+            });
+        }
     }
 }

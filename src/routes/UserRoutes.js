@@ -9,7 +9,7 @@ UserRoutes.put('/update', AuthMiddleware.checkToken, AuthMiddleware.checkUser, U
 
 // admin routes
 UserRoutes.get('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.getAllUser);
-UserRoutes.get('/admin/:id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.getUserProfile);
+UserRoutes.get('/admin/:id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.getUserById);
 UserRoutes.post('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UploadMiddleware.singleUpload, UserController.createUser);
 UserRoutes.post('/admin/activate', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.activateUser);
 UserRoutes.post('/admin/deactivate', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.deactivateUser);
