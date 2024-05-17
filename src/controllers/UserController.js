@@ -46,22 +46,22 @@ module.exports = {
             const avatar = req.file.path;
             try {
 
-                const user = await user.findOne({
+                const userData = await user.findOne({
                     where: {
                         id: user_id
                     }
                 });
 
-                if (!user) {
+                if (!userData) {
                     return res.status(400).json({
                         message: 'User not found'
                     });
                 }
 
-                await user.update({
-                    username: username,
-                    email: email,
-                    phone: phone,
+                await userData.update({
+                    username: username ? username : userData.username,
+                    email: email ? email : userData.email,
+                    phone: phone ? phone : userData.phone,
                     profile_image: avatar
                 }, {
                     where: {
@@ -81,22 +81,22 @@ module.exports = {
             }
         } else {
             try {
-                const user = await user.findOne({
+                const userData = await user.findOne({
                     where: {
                         id: user_id
                     }
                 });
 
-                if (!user) {
+                if (!userData) {
                     return res.status(400).json({
                         message: 'User not found'
                     });
                 }
 
-                await user.update({
-                    username: username ? username : user.username,
-                    phone: phone ? phone : user.phone,
-                    email: email ? email : user.email
+                await userData.update({
+                    username: username ? username : userData.username,
+                    phone: phone ? phone : userData.phone,
+                    email: email ? email : userData.email
                 }, {
                     where: {
                         id: user_id
