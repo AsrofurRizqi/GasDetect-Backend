@@ -449,6 +449,11 @@ module.exports = {
                 ]
             });
 
+            // change timestamp to date and change to GMT+7
+            dataAll.forEach((item) => {
+                item.timestamp = new Date(item.timestamp).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+            });
+
             return res.status(200).json({
                 status: 200,
                 message: 'Data found',
