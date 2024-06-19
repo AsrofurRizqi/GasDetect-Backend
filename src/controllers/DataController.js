@@ -8,7 +8,33 @@ const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
+function groupLocations(data) {
+    const threshold = 0.002; 
+    const groupedData = [];
+  
+    data.forEach(item => {
+      const locationArray = item.location.split(",").map(Number); 
+      const existingGroup = groupedData.find(group => {
+        const latDiff = Math.abs(group.location[0] - locationArray[0]);
+        const lonDiff = Math.abs(group.location[1] - locationArray[1]);
+        return latDiff < threshold && lonDiff < threshold;
+      });
+  
+      if (existingGroup) {
+        existingGroup.items.push(item);
+      } else {
+        groupedData.push({ location: locationArray, items: [item] });
+      }
+    });
+  
+    // Optional: Sort the groups by location if needed
+    // groupedData.sort((a, b) => a.location[0] - b.location[0]);
+  
+    return groupedData;
+  }
+
 module.exports = {
+    // admin
     async getData(req, res) {
         const {
             suhu,
@@ -440,7 +466,7 @@ module.exports = {
             });
         }
     },
-
+    // user
     async getAllData(req, res) {
         try {
             const dataAll = await data.findAll({
@@ -544,10 +570,11 @@ module.exports = {
                     message: 'Data not found'
                 });
             } else {
+                const groupedData = groupLocations(dataByDevice); 
                 return res.status(200).json({
                     status: 200,
                     message: 'Data found',
-                    data: dataByDevice,
+                    data: groupedData,
                 });
             }
         }

@@ -1,7 +1,8 @@
 const {
     user,
     device,
-    Sequelize
+    Sequelize,
+    nomor
 } = require('../models');
 
 const Op = Sequelize.Op;
@@ -68,6 +69,14 @@ module.exports = {
                 avatar: '',
                 role: 'user',
                 phone: '0',
+            });
+
+            await nomor.create({
+                id: uuidv4(),
+                userId: user.id,
+                nomor1: '0',
+                nomor2: '0',
+                nomor3: '0'
             });
 
             const transporter = NodeMailer.createTransport({

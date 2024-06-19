@@ -20,9 +20,9 @@ module.exports={
   },
   "production": {
     use_env_variable: 'DATABASE_URL',
-    dialect: "postgress",
+    dialect: "postgres",
     timezone: "+07:00",
-    protocol: "postgress",
+    protocol: "postgres",
     dialectOptions: {
       ssl : {
         require : true,

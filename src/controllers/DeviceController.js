@@ -6,7 +6,6 @@ const {
 
 const Op = Sequelize.Op;
 const {v4: uuidv4} = require('uuid');
-const bcrypt = require('bcrypt');
 const { or } = require('sequelize');
 
 function keyRandom() {
@@ -401,9 +400,126 @@ module.exports = {
             });
             
         } catch (e) {
+            console.log(e);
             return res.status(500).json({
                 status: 500,
                 message: 'Internal server error'
+            });
+        }
+    },
+
+    async userDisableDevice(req, res) {
+        const {
+            device_id
+        } = req.params;
+
+        const user_id = req.user.id;
+
+        try {
+            if (device_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                id: device_id,
+                userId: user_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        try {
+            await device.update({
+                active: false
+            }, {
+                where: {
+                    id: device_id,
+                    userId: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Success disable device'
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({
+                status: 500,
+                message: "Internal server error"
+            });
+        }
+    },
+
+    async userEnableDevice(req, res) {
+        const {
+            device_id
+        } = req.params;
+
+        const user_id = req.user.id;
+
+        try {
+            if (device_id === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                id: device_id,
+                userId: user_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        try {
+            await device.update({
+                active: true
+            }, {
+                where: {
+                    id: device_id,
+                    userId: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Success enable device'
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({
+                status: 500,
+                message: "Internal server error"
             });
         }
     }

@@ -1,7 +1,8 @@
 const axios = require('axios');
 const {
     notif,
-    user
+    user,
+    nomor
 } = require('../models');
 
 // whatsapp business api
@@ -185,6 +186,6 @@ module.exports = {
                 message: e.message
             });
         }
-    }
+    },
 
 }
