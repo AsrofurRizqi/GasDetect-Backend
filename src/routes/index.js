@@ -4,11 +4,13 @@ const notifRoutes = require("./NotifRoutes");
 const userRoutes = require("./UserRoutes");
 const dataRoutes = require("./DataRoutes");
 const deviceRoutes = require("./DeviceRoutes");
+const nomorRoutes = require("./NomorRoutes");
 
 mainRoutes.use("/auth", authRoutes);
 mainRoutes.use("/notif", notifRoutes);
 mainRoutes.use("/user", userRoutes);
 mainRoutes.use("/data", dataRoutes);
 mainRoutes.use("/device", deviceRoutes);
+mainRoutes.use("/nomor", nomorRoutes);
 
 module.exports= mainRoutes;

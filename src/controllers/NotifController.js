@@ -87,6 +87,10 @@ module.exports = {
                 ]
             });
 
+            notifData.map(data => {
+                data.location = data.location.split(',');
+            });
+
             return res.status(200).json({
                 status: 200,
                 message: 'Notif found',

@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   notification.init({
     userId: DataTypes.UUID,
     status: DataTypes.STRING,
-    level: DataTypes.STRING
+    level: DataTypes.STRING,
+    location: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'notification',
