@@ -162,7 +162,6 @@ module.exports = {
             deviceData.forEach((item) => {
                 delete item.dataValues.urlkey;
                 delete item.dataValues.userId;
-                delete item.dataValues.id;
             });
 
             return res.status(200).json({
