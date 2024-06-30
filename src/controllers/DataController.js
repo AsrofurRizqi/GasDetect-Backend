@@ -263,6 +263,7 @@ module.exports = {
                 message: 'Data saved'
             });
         } catch (e) {
+            console.log(e)
             return res.status(500).json({
                 status: 500,
                 message: e.message
