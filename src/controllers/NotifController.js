@@ -1,4 +1,5 @@
 const axios = require('axios');
+const twilio = require('twilio');
 const {
     notification,
     user,
@@ -8,7 +9,7 @@ const {
 // whatsapp business api
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require('twilio')(accountSid, authToken);
+const client = twilio(accountSid, authToken);
 
 module.exports = {
     async sendNotif(req, res) {
@@ -18,7 +19,7 @@ module.exports = {
         } = req.body;
 
         try {
-            client.messages
+            await client.messages
                 .create({
                     from: 'whatsapp:+14155238886',
                     body: `${title}\n${message}`,
