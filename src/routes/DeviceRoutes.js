@@ -4,6 +4,8 @@ const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
 DeviceRoutes.get('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DeviceController.getDeviceUser);
 DeviceRoutes.get('/details/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DeviceController.getDeviceDetailsUser);
+DeviceRoutes.get('/disable/:id', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DeviceController.userDisableDevice);
+DeviceRoutes.get('/enable/:id', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DeviceController.userEnableDevice);
 DeviceRoutes.post('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DeviceController.addDeviceUser);
 DeviceRoutes.delete('/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkUser,DeviceController.deleteDeviceUser);
 
