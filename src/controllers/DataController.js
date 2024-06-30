@@ -188,6 +188,8 @@ module.exports = {
             level,
         } = req.body;
 
+        console.log(req.body)
+
         const {
             userId,
             id
@@ -217,12 +219,11 @@ module.exports = {
             }
             else if (level == 2) {
                 status = 'Danger'
-            }
-            else {
+            } else if (level == 3) {
                 status = 'Critical'
             }
 
-            if (status != 'Normal' && status != 'Critical') {
+            if (level >= 1) {
                 const nomor = await nomor.findOne({
                     where: {
                         userId: userId
