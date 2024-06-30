@@ -5,6 +5,7 @@ const AuthMiddleware = require('../middlewares/AuthMiddleware');
 DataRoutes.get('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getData);
 DataRoutes.get('/date', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataByDateRange);
 DataRoutes.get('/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataByDeviceId);
+DataRoutes.get('/location', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataAllLocation);
 // device routes
 DataRoutes.post('/', AuthMiddleware.deviceAuth, DataController.insertDataDevice);
 

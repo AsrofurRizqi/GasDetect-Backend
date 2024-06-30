@@ -544,6 +544,41 @@ module.exports = {
         }
     },
 
+    async getDataAllLocation(req, res) {
+        const user_id = req.user.id;
+
+        try {
+            const dataByDevice = await data.findAll({
+                where: {
+                    userId: user_id,
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
+            });
+
+            if (!dataByDevice) {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Data not found'
+                });
+            } else {
+                const groupedData = groupLocations(dataByDevice); 
+                return res.status(200).json({
+                    status: 200,
+                    message: 'Data found',
+                    data: groupedData,
+                });
+            }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
     async getDataDetails(req, res) {
         const data_id = req.params.data_id;
 
