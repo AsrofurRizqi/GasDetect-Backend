@@ -230,7 +230,8 @@ module.exports = {
 
                 if (nomor) {
                     const message = `Device ${id} has ${status} level. Please check the device immediately on location ${latitude},${longitude}`;
-                    await sendMessage(checkNomor.nomor1, message);
+                    const sending = await sendMessage(checkNomor.nomor1, message);
+                    console.log(sending)
                 }
 
                 await notification.create({
