@@ -188,8 +188,6 @@ module.exports = {
             level,
         } = req.body;
 
-        console.log(req.body)
-
         const {
             userId,
             id

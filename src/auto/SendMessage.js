@@ -10,8 +10,8 @@ const sendMessage = async (to, body) => {
       to = to.replace(/^0/,'+62');
       const message = await client.messages.create({
         body: body,
-        to: to, 
-        from: twilioPhoneNumber
+        to: 'whatsapp:' + to, 
+        from: 'whatsapp:' + twilioPhoneNumber
       });
       return message;
     } catch (error) {
