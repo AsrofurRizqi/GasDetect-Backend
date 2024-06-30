@@ -217,6 +217,7 @@ module.exports = {
                 const hash = bcrypt.hashSync(password, salt);
 
                 await user.create({
+                    id: uuid(),
                     username: username,
                     email: email,
                     password: hash,
@@ -252,6 +253,7 @@ module.exports = {
                 const hash = bcrypt.hashSync(password, salt);
 
                 await user.create({
+                    id: uuid(),
                     username: username,
                     email: email,
                     password: hash,
