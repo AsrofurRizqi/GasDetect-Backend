@@ -229,7 +229,14 @@ module.exports = {
                 });
 
                 if (nomor) {
-                    const message = `Device ${id} has ${status} level. Please check the device immediately on location ${latitude},${longitude}`;
+                    const message = `
+                    Attention !!
+                    Device ${id} has a ${status} level.
+                    Please check GAS LEAK immediately at the following location:
+                    Latitude: ${latitude}
+                    Longitude: ${longitude}
+                    `;
+
                     const sending = await sendMessage(checkNomor.nomor1, message);
                     console.log(sending)
                 }
