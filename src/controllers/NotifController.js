@@ -1,45 +1,9 @@
-const axios = require('axios');
-const twilio = require('twilio');
 const {
     notification,
-    user,
-    nomor
+    user
 } = require('../models');
 
-// whatsapp business api
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-
 module.exports = {
-    async sendNotif(req, res) {
-        const {
-            title,
-            message,
-        } = req.body;
-
-        try {
-            const send = await client.messages.create({
-                    from: 'whatsapp:+14155238886',
-                    body: `${title}\n${message}`,
-                    to: `whatsapp:+6281476656815`
-                })
-
-            return res.status(200).json({
-                status: 200,
-                message: 'Notif sent',
-                sid: send.sid,
-                date: send.dateCreated,
-                data: send.body
-            });
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e
-            });
-        }
-    },
-
     async getNotifUser(req, res) {
         const user_id = req.user.id;
 

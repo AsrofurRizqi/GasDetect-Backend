@@ -3,9 +3,7 @@ const NotifController = require('../controllers/NotifController');
 const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
 NotifRoutes.get('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, NotifController.getNotifUser);
-NotifRoutes.post('/', NotifController.sendNotif);
 
-// admin
 NotifRoutes.get('/admin/:user_id', AuthMiddleware.checkToken , AuthMiddleware.checkRole , NotifController.getNotifByUser);
 
 module.exports = NotifRoutes;
