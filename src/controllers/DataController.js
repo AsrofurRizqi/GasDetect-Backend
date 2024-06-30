@@ -564,6 +564,7 @@ module.exports = {
                 });
             } else {
                 const groupedData = groupLocations(dataByDevice); 
+                groupedData.forEach(group => delete group.items);
                 return res.status(200).json({
                     status: 200,
                     message: 'Data found',
