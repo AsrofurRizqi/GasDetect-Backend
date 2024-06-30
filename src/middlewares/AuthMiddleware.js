@@ -115,6 +115,7 @@ module.exports = {
         }
 
         req.device = deviceExists;
+        req.user = userExists;
         next();
 
     }

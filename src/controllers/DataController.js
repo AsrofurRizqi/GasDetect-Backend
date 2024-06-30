@@ -230,7 +230,7 @@ module.exports = {
 
                 if (nomor) {
                     const message = `
-                    Attention !!
+                    Attention user ${req.user.username} !!
                     Device ${id} has a ${status} level.
                     Please check GAS LEAK immediately at the following location:
                     Latitude: ${latitude}
