@@ -17,36 +17,12 @@ module.exports = {
             message,
         } = req.body;
 
-        const checkuser = await user.findOne({
-            where: {
-                id: user_id
-            }
-        });
-
-        if (!checkuser) {
-            return res.status(400).json({
-                status: 400,
-                message: 'User not found'
-            });
-        }
-
         try {
-            await notification.create({
-                title: title,
-                status: 'normal',
-                level: "0",
-                userId: user_id
-            });
-
-            //strip 0 from first letter
-            const phone = checkuser.nomor1
-
-            // send whatsapp
             client.messages
                 .create({
                     from: 'whatsapp:+14155238886',
                     body: `${title}\n${message}`,
-                    to: `whatsapp:+62${checkuser.nomor1}`
+                    to: `whatsapp:+6281476656815`
                 })
                 .then(message => console.log(message.sid))
                 .done();
