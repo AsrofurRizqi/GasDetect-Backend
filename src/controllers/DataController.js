@@ -35,65 +35,18 @@ function groupLocations(data) {
 
 module.exports = {
     // admin
-    async getData(req, res) {
-        const {
-            suhu,
-            kelembapan,
-            ph,
-            turbidity,
-        } = req.body;
-
-        const user_id = req.user.id;
-
+    async getAllData(req, res) {
         try {
-            if (suhu === '' || kelembapan === '' || ph === '' || turbidity === '' || user_id === '') {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Please fill all field'
-                });
-            }
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e.message
-            });
-        }
-
-        const checkuser = await user.findOne({
-            where: {
-                id: user_id
-            }
-        });
-
-        if (!checkuser) {
-            return res.status(400).json({
-                status: 400,
-                message: 'User not found'
-            });
-        }
-
-        try {
-            const dataByUser = await data.findAndCountAll({
-                where: {
-                    userId: user_id
-                },
+            const dataAll = await data.findAll({
                 order: [
                     ['createdAt', 'DESC']
                 ]
             });
 
-            let dataGroup = {};
-            dataByUser.forEach((item) => {
-                if (!dataGroup[item.deviceId]) {
-                    dataGroup[item.deviceId] = [];
-                }
-                dataGroup[item.deviceId].push(item);
-            });
-
             return res.status(200).json({
                 status: 200,
                 message: 'Data found',
-                data: dataGroup,
+                data: dataAll,
             });
         }
         catch (e) {
@@ -467,18 +420,33 @@ module.exports = {
         }
     },
     // user
-    async getAllData(req, res) {
+    async getData(req, res) {
+        const user_id = req.user.id;
+
         try {
-            const dataAll = await data.findAll({
+            const dataByUser = await data.findAndCountAll({
+                where: {
+                    userId: user_id
+                },
                 order: [
                     ['createdAt', 'DESC']
                 ]
             });
 
+            //group data by deviceId
+            const groupedData = dataByUser.reduce((acc, item) => {
+                const key = item.deviceId;
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(item);
+                return acc;
+            }, {});
+
             return res.status(200).json({
                 status: 200,
                 message: 'Data found',
-                data: dataAll,
+                data: groupedData,
             });
         }
         catch (e) {
