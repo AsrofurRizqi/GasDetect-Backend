@@ -224,7 +224,7 @@ module.exports = {
             }
 
             if (level >= 1) {
-                const nomor = await nomor.findOne({
+                const checkNomor = await nomor.findOne({
                     where: {
                         userId: userId
                     }
@@ -232,7 +232,7 @@ module.exports = {
 
                 if (nomor) {
                     const message = `Device ${id} has ${status} level. Please check the device immediately on location ${latitude},${longitude}`;
-                    await sendMessage(nomor.nomor1, message);
+                    await sendMessage(checkNomor.nomor1, message);
                 }
 
                 await notification.create({
