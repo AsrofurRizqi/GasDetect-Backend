@@ -15,22 +15,7 @@ module.exports = {
         const {
             title,
             message,
-            user_id
         } = req.body;
-
-        try {
-            if (title === '' || message === '' || user_id === '') {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Please fill all field'
-                });
-            }
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e.message
-            });
-        }
 
         const checkuser = await user.findOne({
             where: {
@@ -48,16 +33,20 @@ module.exports = {
         try {
             await notification.create({
                 title: title,
-                message: message,
-                user_id: user_id
+                status: 'normal',
+                level: "0",
+                userId: user_id
             });
+
+            //strip 0 from first letter
+            const phone = checkuser.nomor1
 
             // send whatsapp
             client.messages
                 .create({
                     from: 'whatsapp:+14155238886',
                     body: `${title}\n${message}`,
-                    to: `whatsapp:+62${checkuser.phone}`
+                    to: `whatsapp:+62${checkuser.nomor1}`
                 })
                 .then(message => console.log(message.sid))
                 .done();

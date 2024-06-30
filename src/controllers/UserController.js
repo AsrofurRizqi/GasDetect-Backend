@@ -119,6 +119,9 @@ module.exports = {
     async getAllUser(req, res) {
         try {
             const users = await user.findAll({
+                where: {
+                    role: 'user'
+                },
                 order: [
                     ['createdAt', 'ASC']
                 ]
