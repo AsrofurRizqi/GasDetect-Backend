@@ -161,7 +161,8 @@ module.exports = {
 
         const checkuser = await user.findOne({
             where: {
-                id: user_id
+                id: user_id,
+                role: 'user'
             }
         });
 
@@ -320,7 +321,8 @@ module.exports = {
                 is_activated: true
             }, {
                 where: {
-                    id: user_id
+                    id: user_id,
+                    role: 'user'
                 }
             });
 
@@ -357,7 +359,8 @@ module.exports = {
 
         const checkuser = await user.findOne({
             where: {
-                id: user_id
+                id: user_id,
+                role: 'user'
             }
         });
 
@@ -373,7 +376,8 @@ module.exports = {
                 is_activated: false
             }, {
                 where: {
-                    id: user_id
+                    id: user_id,
+                    role: 'user'
                 }
             });
 
@@ -437,7 +441,8 @@ module.exports = {
 
                 const userData = await user.findOne({
                     where: {
-                        id: user_id
+                        id: user_id,
+                        role: 'user'
                     }
                 });
 
@@ -473,7 +478,8 @@ module.exports = {
             try {
                 const userData = await user.findOne({
                     where: {
-                        id: user_id
+                        id: user_id,
+                        role: 'user'
                     }
                 });
 
