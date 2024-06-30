@@ -28,7 +28,9 @@ module.exports = {
             return res.status(200).json({
                 status: 200,
                 message: 'Notif sent',
-                data: send
+                sid: send.sid,
+                date: send.dateCreated,
+                data: send.body
             });
         } catch (e) {
             return res.status(500).json({
