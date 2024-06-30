@@ -189,7 +189,8 @@ module.exports = {
         } = req.body;
 
         const {
-            userId
+            userId,
+            id
         } = req.device;
 
         try {
@@ -221,27 +222,27 @@ module.exports = {
                 status = 'Critical'
             }
 
-            // if (status != 'Normal' && status != 'Critical') {
-            //     const nomor = await nomor.findOne({
-            //         where: {
-            //             userId: userId
-            //         }
-            //     });
+            if (status != 'Normal' && status != 'Critical') {
+                const nomor = await nomor.findOne({
+                    where: {
+                        userId: userId
+                    }
+                });
 
-            //     if (nomor) {
-            //         const message = `Device ${id} has ${status} level. Please check the device immediately on location ${latitude},${longitude}`;
-            //         await sendMessage(nomor.nomor1, message);
-            //     }
+                if (nomor) {
+                    const message = `Device ${id} has ${status} level. Please check the device immediately on location ${latitude},${longitude}`;
+                    await sendMessage(nomor.nomor1, message);
+                }
 
-            //     await notification.create({
-            //         id: uuidv4(),
-            //         userId: userId,
-            //         status: status,
-            //         level: level,
-            //         location: `${latitude},${longitude}`
-            //     });
+                await notification.create({
+                    id: uuidv4(),
+                    userId: userId,
+                    status: status,
+                    level: level,
+                    location: `${latitude},${longitude}`
+                });
 
-            // } 
+            } 
 
             await data.create({
                 id: uuidv4(),
