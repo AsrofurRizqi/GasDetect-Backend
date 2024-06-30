@@ -419,4 +419,90 @@ module.exports = {
             });
         }
     },
+
+    async updateUserByAdmin(req, res) {
+        const {
+            username,
+            email,
+            phone,
+            password
+        } = req.body;
+
+        const user_id = req.params.id;
+
+        if (req.file) {
+            const avatar = req.file.path;
+            try {
+
+                const userData = await user.findOne({
+                    where: {
+                        id: user_id
+                    }
+                });
+
+                if (!userData) {
+                    return res.status(400).json({
+                        message: 'User not found'
+                    });
+                }
+
+                await userData.update({
+                    username: username ? username : userData.username,
+                    email: email ? email : userData.email,
+                    phone: phone ? phone : userData.phone,
+                    profile_image: avatar,
+                    password: password ? bcrypt.hashSync(password, bcrypt.genSaltSync(10)) : userData.password
+                }, {
+                    where: {
+                        id: user_id
+                    }
+                });
+
+                return res.status(200).json({
+                    status: 200,
+                    message: 'User updated'
+                });
+            } catch (e) {
+                return res.status(500).json({
+                    status: 500,
+                    message: e.message
+                });
+            }
+        } else {
+            try {
+                const userData = await user.findOne({
+                    where: {
+                        id: user_id
+                    }
+                });
+
+                if (!userData) {
+                    return res.status(400).json({
+                        message: 'User not found'
+                    });
+                }
+
+                await userData.update({
+                    username: username ? username : userData.username,
+                    phone: phone ? phone : userData.phone,
+                    email: email ? email : userData.email,
+                    password: password ? bcrypt.hashSync(password, bcrypt.genSaltSync(10)) : userData.password
+                }, {
+                    where: {
+                        id: user_id
+                    }
+                });
+
+                return res.status(200).json({
+                    status: 200,
+                    message: 'User updated'
+                });
+            } catch (e) {
+                return res.status(500).json({
+                    status: 500,
+                    message: e.message
+                });
+            }
+        }
+    }
 }

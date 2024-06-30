@@ -16,6 +16,7 @@ UserRoutes.get('/admin/:id', AuthMiddleware.checkToken, AuthMiddleware.checkRole
 UserRoutes.post('/admin', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UploadMiddleware.singleUpload, UserController.createUser);
 UserRoutes.post('/admin/activate', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.activateUser);
 UserRoutes.post('/admin/deactivate', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.deactivateUser);
+UserRoutes.put('/admin/:id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UploadMiddleware.singleUpload, UserController.updateUserByAdmin);
 UserRoutes.delete('/admin/:id', AuthMiddleware.checkToken, AuthMiddleware.checkRole, UserController.deleteUser);
 
 module.exports = UserRoutes;
