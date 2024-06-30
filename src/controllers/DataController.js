@@ -433,20 +433,10 @@ module.exports = {
                 ]
             });
 
-            //group data by deviceId
-            const groupedData = dataByUser.reduce((acc, item) => {
-                const key = item.deviceId;
-                if (!acc[key]) {
-                    acc[key] = [];
-                }
-                acc[key].push(item);
-                return acc;
-            }, {});
-
             return res.status(200).json({
                 status: 200,
                 message: 'Data found',
-                data: groupedData,
+                data: dataByUser
             });
         }
         catch (e) {
