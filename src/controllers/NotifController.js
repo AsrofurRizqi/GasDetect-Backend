@@ -19,7 +19,7 @@ module.exports = {
         } = req.body;
 
         try {
-            const message = await client.messages.create({
+            const send = await client.messages.create({
                     from: 'whatsapp:+14155238886',
                     body: `${title}\n${message}`,
                     to: `whatsapp:+6281476656815`
@@ -28,12 +28,12 @@ module.exports = {
             return res.status(200).json({
                 status: 200,
                 message: 'Notif sent',
-                data: message
+                data: send
             });
         } catch (e) {
             return res.status(500).json({
                 status: 500,
-                message: e.message
+                message: e
             });
         }
     },
