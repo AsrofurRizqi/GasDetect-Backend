@@ -19,18 +19,16 @@ module.exports = {
         } = req.body;
 
         try {
-            await client.messages
-                .create({
+            const message = await client.messages.create({
                     from: 'whatsapp:+14155238886',
                     body: `${title}\n${message}`,
                     to: `whatsapp:+6281476656815`
                 })
-                .then(message => console.log(message.sid))
-                .done();
 
             return res.status(200).json({
                 status: 200,
-                message: 'Notif sent'
+                message: 'Notif sent',
+                data: message
             });
         } catch (e) {
             return res.status(500).json({
@@ -63,42 +61,6 @@ module.exports = {
                     status: 200,
                     message: 'Notif found',
                     data: notifData
-                });
-            }
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e.message
-            });
-        }
-    },
-
-    async verifyNumber(req, res) {
-        const {
-            phone
-        } = req.body;
-
-        try {
-            if (phone === '') {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Please fill all field'
-                });
-            }
-        } catch (e) {
-            return res.status(500).json({
-                status: 500,
-                message: e.message
-            });
-        }
-
-        try {
-            const response = await axios.get(`https://api.whatsapp.com/send?phone=${phone}`);
-
-            if (response.status === 200) {
-                return res.status(200).json({
-                    status: 200,
-                    message: 'Number verified'
                 });
             }
         } catch (e) {
