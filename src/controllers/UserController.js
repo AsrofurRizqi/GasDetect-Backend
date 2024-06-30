@@ -194,7 +194,8 @@ module.exports = {
         const {
             username,
             email,
-            password
+            password,
+            phone
         } = req.body;
 
         if (req.file) {
@@ -221,7 +222,11 @@ module.exports = {
                     username: username,
                     email: email,
                     password: hash,
-                    profile_image: avatar
+                    profile_image: avatar,
+                    role: 'user',
+                    phone: phone,
+                    is_verified: true,
+                    is_activated: true
                 });
 
                 return res.status(200).json({
@@ -257,7 +262,11 @@ module.exports = {
                     username: username,
                     email: email,
                     password: hash,
-                    profile_image: 'assets/images/default-avatar.png'
+                    profile_image: 'assets/images/default-avatar.png',
+                    role: 'user',
+                    phone: phone,
+                    is_activated: true,
+                    is_verified: true
                 });
 
                 return res.status(200).json({
