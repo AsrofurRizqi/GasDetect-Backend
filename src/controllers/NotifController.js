@@ -1,6 +1,6 @@
 const axios = require('axios');
 const {
-    notif,
+    notification,
     user,
     nomor
 } = require('../models');
@@ -46,7 +46,7 @@ module.exports = {
         }
 
         try {
-            await notif.create({
+            await notification.create({
                 title: title,
                 message: message,
                 user_id: user_id
@@ -78,7 +78,7 @@ module.exports = {
         const user_id = req.user.id;
 
         try {
-            const notifData = await notif.findAll({
+            const notifData = await notification.findAndCountAll({
                 where: {
                     user_id: user_id
                 },
@@ -173,7 +173,7 @@ module.exports = {
         }
 
         try {
-            const notifData = await notif.findAll({
+            const notifData = await notification.findAndCountAll({
                 where: {
                     user_id: user_id
                 }

@@ -73,7 +73,7 @@ module.exports = {
         }
 
         try {
-            const dataByUser = await data.findAll({
+            const dataByUser = await data.findAndCountAll({
                 where: {
                     userId: user_id
                 },
