@@ -140,9 +140,7 @@ module.exports = {
     },
 
     async deleteUser(req, res) {
-        const {
-            user_id
-        } = req.body;
+        const user_id = req.params.id;
 
         try {
             if (user_id === '') {
