@@ -58,12 +58,13 @@ module.exports = {
                         message: 'User not found'
                     });
                 }
+                const imagePath = avatar.split('/').slice(1).join('/');
 
                 await userData.update({
                     username: username ? username : userData.username,
                     email: email ? email : userData.email,
                     phone: phone ? phone : userData.phone,
-                    profile_image: avatar
+                    profile_image: imagePath
                 }, {
                     where: {
                         id: user_id
