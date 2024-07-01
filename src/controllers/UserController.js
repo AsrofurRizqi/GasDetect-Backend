@@ -1,6 +1,7 @@
 const {
     user,
-    Sequelize
+    Sequelize,
+    nomor
 } = require('../models');
 
 const Op = Sequelize.Op;
@@ -177,6 +178,12 @@ module.exports = {
             await user.destroy({
                 where: {
                     id: user_id
+                }
+            });
+
+            await nomor.destroy({
+                where: {
+                    userId: user_id
                 }
             });
 

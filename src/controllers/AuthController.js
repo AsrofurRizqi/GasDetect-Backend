@@ -59,7 +59,7 @@ module.exports = {
         try {
             const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '2h'}, { algorithm: 'RS256' });
 
-            await user.create({
+            const createUser = await user.create({
                 id: uuidv4(),
                 username: nama,
                 email: email,
@@ -73,7 +73,7 @@ module.exports = {
 
             await nomor.create({
                 id: uuidv4(),
-                userId: user.id,
+                userId: createUser.id,
                 nomor1: '0',
                 nomor2: '0',
                 nomor3: '0'
