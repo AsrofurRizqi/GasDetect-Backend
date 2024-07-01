@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 // rename file and rezise image
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, './public/profile'));
+        cb(null, './public/profile');
     },
     filename: (req, file, cb) => {
         const ext = file.originalname.split('.').pop();
