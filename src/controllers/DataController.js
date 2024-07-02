@@ -233,8 +233,7 @@ module.exports = {
                     Attention user ${req.user.username} !!
                     Device ${id} has a ${status} level.
                     Please check GAS LEAK immediately at the following location:
-                    Latitude: ${latitude}
-                    Longitude: ${longitude}
+                    https://www.google.com/maps?q=${latitude},${longitude}
                     `;
 
                     const sending = await sendMessage(checkNomor.nomor1, message);
