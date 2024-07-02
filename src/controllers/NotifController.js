@@ -124,7 +124,7 @@ module.exports = {
         try {
             const notifData = await notification.findAndCountAll({
                 where: {
-                    user_id: user_id
+                    userId: user_id
                 }
             });
     
