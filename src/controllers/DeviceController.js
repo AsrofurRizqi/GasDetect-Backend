@@ -1,6 +1,7 @@
 const {
     device,
     user,
+    data,
     Sequelize
 } = require('../models');
 
@@ -133,6 +134,13 @@ module.exports = {
                     userId: user_id
                 }
             });
+
+            await data.destroy({
+                where: {
+                    userId: user_id,
+                    deviceId: device_id
+                }
+            })
 
             return res.status(200).json({
                 status: 200,
