@@ -102,6 +102,12 @@ module.exports = {
             });
         }
 
+        if (!deviceExists.active) {
+            return res.status(410).send({
+                message: 'Device is not active'
+            });
+        }
+
         const userExists = await user.findOne({
             where: {
                 id: deviceExists.userId
