@@ -236,13 +236,7 @@ module.exports = {
                     https://www.google.com/maps?q=${latitude},${longitude}
                     `;
 
-                    sendMessage(checkNomor.nomor1, message)
-                    .then((sending) => {
-                        console.log(sending);
-                    })
-                    .catch((error) => {
-                        console.error('Failed to send message:', error);
-                    });
+                    await sendMessage(checkNomor.nomor1, message)
                 }
 
                 await notification.create({
