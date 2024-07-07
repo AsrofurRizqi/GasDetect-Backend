@@ -190,7 +190,8 @@ module.exports = {
 
         const {
             userId,
-            id
+            id,
+            deviceName
         } = req.device;
 
         try {
@@ -231,7 +232,7 @@ module.exports = {
                 if (nomor) {
                     const message = `
                     Attention user ${req.user.username} !!
-                    Device ${id} has a ${status} level.
+                    Device ${deviceName} has a ${status} level.
                     Please check GAS LEAK immediately at the following location:
                     https://www.google.com/maps?q=${latitude},${longitude}
                     `;
