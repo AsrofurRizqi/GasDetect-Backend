@@ -230,7 +230,7 @@ module.exports = {
                     }
                 });
 
-                const damkar = await damkar.findOne({
+                const damkarNomor = await damkar.findOne({
                     where: {
                         userId: 'df6d2cc4-05c5-4dcf-aa91-579015e515d9'
                     }
@@ -245,7 +245,7 @@ module.exports = {
                     https://www.google.com/maps?q=${latitude},${longitude}
                     `;
 
-                    await sendMessage(damkar.nomor, message)
+                    await sendMessage(damkarNomor.nomor, message)
                 }
 
                 if (nomor && level != 3) {
