@@ -3,7 +3,8 @@ const {
     Sequelize,
     user,
     nomor,
-    notification
+    notification,
+    damkar
 } = require('../models');
 
 const Op = Sequelize.Op;
@@ -229,7 +230,25 @@ module.exports = {
                     }
                 });
 
-                if (nomor) {
+                const damkar = await damkar.findOne({
+                    where: {
+                        userId: 'df6d2cc4-05c5-4dcf-aa91-579015e515d9'
+                    }
+                });
+
+                if (level == 3) {
+
+                    const message = `
+                    Attention !!
+                    Meminta bantuan untuk penanganan kebocoran gas.
+                    Please check GAS LEAK immediately at the following location:
+                    https://www.google.com/maps?q=${latitude},${longitude}
+                    `;
+
+                    await sendMessage(damkar.nomor, message)
+                }
+
+                if (nomor && level != 3) {
                     const message = `
                     Attention user ${req.user.username} !!
                     Device ${deviceName} has a ${status} level.
@@ -238,6 +257,8 @@ module.exports = {
                     `;
 
                     await sendMessage(checkNomor.nomor1, message)
+                    await sendMessage(checkNomor.nomor2, message)
+                    await sendMessage(checkNomor.nomor3, message)
                 }
 
                 await notification.create({
