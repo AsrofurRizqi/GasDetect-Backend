@@ -95,7 +95,12 @@ module.exports = {
             const notifData = await notification.findAndCountAll({
                 order: [
                     ['createdAt', 'DESC']
-                ]
+                ],
+                include: [{
+                    model: user,
+                    as: 'user_notification',
+                    attributes: ['username']
+                }]
             });
 
             if (notifData.count === 0) {
