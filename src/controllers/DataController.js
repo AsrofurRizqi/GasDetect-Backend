@@ -239,26 +239,48 @@ module.exports = {
                 if (level == 3) {
 
                     const message = `
-                    Attention !!
+                    Perhatian !!
                     Meminta bantuan untuk penanganan kebocoran gas.
-                    Please check GAS LEAK immediately at the following location:
+                    Tolong segera cek kebocoran gas pada device ${deviceName} dengan status ${status} pada lokasi
                     https://www.google.com/maps?q=${latitude},${longitude}
                     `;
 
+                    const messageSecondary = `
+                    Perhatian !!
+                    Memanggil pemadam kebakaran untuk penanganan kebocoran gas.
+                    pada device ${deviceName} dengan status ${status}.
+                    lokasi : https://www.google.com/maps?q=${latitude},${longitude}
+                    `;
+
                     await sendMessage(damkarNomor.nomor, message)
+                    if (checkNomor.nomor1 !== '0') {
+                        await sendMessage(checkNomor.nomor1, messageSecondary)
+                    }
+                    if (checkNomor.nomor2 !== '0') {
+                        await sendMessage(checkNomor.nomor2, messageSecondary)
+                    }
+                    if (checkNomor.nomor3 !== '0') {
+                        await sendMessage(checkNomor.nomor3, messageSecondary)
+                    }
                 }
 
                 if (nomor && level != 3) {
                     const message = `
-                    Attention user ${req.user.username} !!
-                    Device ${deviceName} has a ${status} level.
-                    Please check GAS LEAK immediately at the following location:
+                    Perhatian untuk user ${req.user.username} !!
+                    Device ${deviceName} memiliki status ${status}.
+                    Tolong segera cek kebocoran gas pada device ${deviceName} dengan status ${status} pada lokasi
                     https://www.google.com/maps?q=${latitude},${longitude}
                     `;
 
-                    await sendMessage(checkNomor.nomor1, message)
-                    await sendMessage(checkNomor.nomor2, message)
-                    await sendMessage(checkNomor.nomor3, message)
+                    if (checkNomor.nomor1 !== '0') {
+                        await sendMessage(checkNomor.nomor1, message)
+                    }
+                    if (checkNomor.nomor2 !== '0') {
+                        await sendMessage(checkNomor.nomor2, message)
+                    }
+                    if (checkNomor.nomor3 !== '0') {
+                        await sendMessage(checkNomor.nomor3, message)
+                    }
                 }
 
                 await notification.create({
