@@ -716,7 +716,7 @@ module.exports = {
                     attributes: ['deviceName', 'deviceNumber']
                 }],
                 order: [
-                    ['$data_device.deviceNumber$', 'ASC']
+                    [{ model: device, as: 'data_device' }, 'deviceNumber', 'ASC'],
                 ]
             });
 
