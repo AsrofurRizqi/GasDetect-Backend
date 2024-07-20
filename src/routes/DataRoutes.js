@@ -6,6 +6,7 @@ DataRoutes.get('/', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataCon
 DataRoutes.get('/date', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataByDateRange);
 DataRoutes.get('/device/:device_id', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataByDeviceId);
 DataRoutes.get('/location', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.getDataAllLocation);
+DataRoutes.get('/taildata', AuthMiddleware.checkToken, AuthMiddleware.checkUser, DataController.tailGetData);
 // device routes
 DataRoutes.post('/', AuthMiddleware.deviceAuth, DataController.insertDataDevice);
 

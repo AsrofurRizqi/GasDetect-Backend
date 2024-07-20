@@ -4,7 +4,8 @@ const {
     user,
     nomor,
     notification,
-    damkar
+    damkar,
+    device
 } = require('../models');
 
 const Op = Sequelize.Op;
@@ -691,6 +692,39 @@ module.exports = {
                     data: dataDetails,
                 });
             }
+        }
+        catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+    },
+
+    async tailGetData(req, res) {
+        const user_id = req.user.id;
+
+        try {
+            const dataByUser = await data.findAll({
+                where: {
+                    userId: user_id
+                },
+                limit: 10,
+                include: [{
+                    model: device,
+                    as: 'data_device',
+                    attributes: ['deviceName', 'deviceNumber']
+                }],
+                order: [
+                    ['$data_device.deviceNumber$', 'ASC']
+                ]
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Data found',
+                data: dataByUser
+            });
         }
         catch (e) {
             return res.status(500).json({
