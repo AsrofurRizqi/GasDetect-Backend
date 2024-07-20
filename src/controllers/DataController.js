@@ -720,6 +720,9 @@ module.exports = {
                         deviceNumber: numberdevice
                     }
                 }],
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             return res.status(200).json({
