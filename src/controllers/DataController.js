@@ -12,6 +12,7 @@ const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const { sendMessage } = require('../auto/SendMessage');
+const { where } = require('sequelize');
 
 function groupLocations(data) {
     const threshold = 0.002; 
@@ -703,21 +704,22 @@ module.exports = {
 
     async tailGetData(req, res) {
         const user_id = req.user.id;
+        const numberdevice = req.params.numberdevice || 1;
 
         try {
             const dataByUser = await data.findAll({
                 where: {
-                    userId: user_id
+                    userId: user_id,
                 },
-                limit: 10,
+                limit: 1,
                 include: [{
                     model: device,
                     as: 'data_device',
-                    attributes: ['deviceName', 'deviceNumber']
+                    attributes: ['deviceName', 'deviceNumber'],
+                    where: {
+                        deviceNumber: numberdevice
+                    }
                 }],
-                order: [
-                    [{ model: device, as: 'data_device' }, 'deviceNumber', 'ASC'],
-                ]
             });
 
             return res.status(200).json({
