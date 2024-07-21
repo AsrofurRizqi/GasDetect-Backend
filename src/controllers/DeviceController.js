@@ -66,7 +66,24 @@ module.exports = {
             });
         }
 
-        const nextNumber = deviceNumber + 1;
+        const deviceNumberData = await device.findAll({
+            where: {
+                userId: user_id
+            }
+        });
+
+        let deviceNumberArray = [];
+        deviceNumberData.forEach((item) => {
+            deviceNumberArray.push(item.deviceNumber);
+        });
+
+        let nextNumber = 1;
+        for (let i = 1; i <= 3; i++) {
+            if (!deviceNumberArray.includes(i)) {
+                nextNumber = i;
+                break;
+            }
+        }
 
         try {
             const createDev = await device.create({
