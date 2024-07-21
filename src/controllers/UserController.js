@@ -248,7 +248,7 @@ module.exports = {
                 const salt = bcrypt.genSaltSync(10);
                 const hash = bcrypt.hashSync(password, salt);
 
-                await user.create({
+                const createUser = await user.create({
                     id: uuid(),
                     username: username,
                     email: email,
@@ -258,6 +258,14 @@ module.exports = {
                     phone: phone,
                     is_verified: true,
                     is_activated: true
+                });
+
+                await nomor.create({
+                    id: uuid(),
+                    userId: createUser.id,
+                    nomor1: '0',
+                    nomor2: '0',
+                    nomor3: '0'
                 });
 
                 return res.status(200).json({
@@ -288,7 +296,7 @@ module.exports = {
                 const salt = bcrypt.genSaltSync(10);
                 const hash = bcrypt.hashSync(password, salt);
 
-                await user.create({
+                const createUser = await user.create({
                     id: uuid(),
                     username: username,
                     email: email,
@@ -298,6 +306,14 @@ module.exports = {
                     phone: phone,
                     is_activated: true,
                     is_verified: true
+                });
+
+                await nomor.create({
+                    id: uuid(),
+                    userId: createUser.id,
+                    nomor1: '0',
+                    nomor2: '0',
+                    nomor3: '0'
                 });
 
                 return res.status(200).json({
