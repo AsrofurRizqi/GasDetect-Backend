@@ -1,7 +1,10 @@
 const {
     user,
     Sequelize,
-    nomor
+    nomor,
+    device,
+    data,
+    notification
 } = require('../models');
 
 const Op = Sequelize.Op;
@@ -187,6 +190,24 @@ module.exports = {
                     userId: user_id
                 }
             });
+
+            await notification.destroy({
+                where: {
+                    userId: user_id
+                }
+            })
+
+            await data.destroy({
+                where: {
+                    userId: user_id
+                }
+            })
+
+            await device.destroy({
+                where: {
+                    userId: user_id
+                }
+            })
 
             return res.status(200).json({
                 status: 200,
