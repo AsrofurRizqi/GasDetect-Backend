@@ -130,10 +130,17 @@ module.exports = {
 
             transporter.sendMail(mailOptions, (err, info) => {
                 if (err) {
-                    return res.status(500).json({
-                        status: 500,
-                        message: err.message
-                    });
+                    if (err.responseCode === 550) {
+                        return res.status(500).json({
+                            status: 500,
+                            message: 'Email not valid'
+                        });
+                    } else {
+                        return res.status(500).json({
+                            status: 500,
+                            message: err.message
+                        });
+                    }
                 } else {
                     return res.status(200).json({
                         status: 200,
