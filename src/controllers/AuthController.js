@@ -129,6 +129,8 @@ module.exports = {
             };
 
             transporter.sendMail(mailOptions, (err, info) => {
+                console.log(err)
+                console.log(info)
                 if (err) {
                     if (err.responseCode === 550) {
                         return res.status(500).json({
