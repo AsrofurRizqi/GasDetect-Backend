@@ -9,6 +9,7 @@ const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const NodeMailer = require('nodemailer');
+const mailjet = require('node-mailjet').connect(process.env.MAILJET_API_KEY, process.env.MAILJET_SECRET_KEY);
 const {v4: uuidv4} = require('uuid');
 
 module.exports = {
@@ -79,77 +80,82 @@ module.exports = {
                 nomor3: '0'
             });
 
-            const transporter = NodeMailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.EMAIL,
-                    pass: process.env.EMAIL_PASSWORD
-                }
-            });
-
-            const mailOptions = {
-                from: process.env.EMAIL,
-                to: email,
-                subject: 'Verify Account Email',
-                html: `<!DOCTYPE html>
-<html>
-    <center> 
-        <h1>Email Verification For User Account ${nama}</h1>
-        <p>Click this link to verify your email, valid for 2 hours</p>
-        <div>
-            <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
-        </div>
-        <button 
-            style=
-            "
-            border: none;
-            transition-duration: 0.4s;
-            cursor: pointer;
-            background-color: #76b5c3;
-            margin-top: 20px;
-            border-radius: 12px;
-            "
-            type="button"
-        > 
-            <a 
-            style=
-            "
-            text-decoration: none;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;color: white;
-            padding: 10px 32px;
-            transition-duration: 0.4s;" 
-            href='${process.env.BASE_URL}api/auth/verify/${token}'>Verify Email</a>
-        </button>
-        <center>
-</html>`
-            };
-
-            transporter.sendMail(mailOptions, (err, info) => {
-                console.log(err)
-                console.log(info)
-                if (err) {
-                    if (err.responseCode === 550) {
-                        return res.status(500).json({
-                            status: 500,
-                            message: 'Email not valid'
-                        });
-                    } else {
-                        return res.status(500).json({
-                            status: 500,
-                            message: err.message
-                        });
-                    }
+            const request = mailjet
+                .post("send", { 'version': 'v3.1' })
+                .request({
+                    Messages: [
+                        {
+                            From: {
+                                Email: process.env.EMAIL,
+                                Name: "Kuro Gas Detect"
+                            },
+                            To: [
+                                {
+                                    Email: email,
+                                    Name: nama
+                                }
+                            ],
+                            Subject: "Verify Account Email",
+                            HTMLPart: `<!DOCTYPE html>
+        <html>
+            <center> 
+                <h1>Email Verification For User Account ${nama}</h1>
+                <p>Click this link to verify your email, valid for 2 hours</p>
+                <div>
+                    <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
+                </div>
+                <button 
+                    style=
+                    "
+                    border: none;
+                    transition-duration: 0.4s;
+                    cursor: pointer;
+                    background-color: #76b5c3;
+                    margin-top: 20px;
+                    border-radius: 12px;
+                    "
+                    type="button"
+                > 
+                    <a 
+                    style=
+                    "
+                    text-decoration: none;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;color: white;
+                    padding: 10px 32px;
+                    transition-duration: 0.4s;" 
+                    href='${process.env.BASE_URL}api/auth/verify/${token}'>Verify Email</a>
+                </button>
+                <center>
+        </html>`
+                        }
+                    ]
+                });
+            
+            try {
+                const result = await request;
+                return {
+                    status: 200,
+                    message: 'Account created, please verify your email'
+                };
+            } catch (err) {
+                if (err.statusCode === 400) {
+                    return {
+                        status: 500,
+                        message: 'Email not valid'
+                    };
                 } else {
-                    return res.status(200).json({
-                        status: 200,
-                        message: 'Account created, please verify your email'
-                    });
+                    return {
+                        status: 500,
+                        message: err.message
+                    };
                 }
-            });
+            }
+
+            
         } catch (e) {
             console.log(e)
             return res.status(500).json({
