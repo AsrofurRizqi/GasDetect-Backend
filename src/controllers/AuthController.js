@@ -10,7 +10,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const NodeMailer = require('nodemailer');
 const Mailjet = require('node-mailjet');
-const mailjet = Mailjet.connect(process.env.MAILJET_API_KEY, process.env.MAILJET_SECRET_KEY);
+const mailjet = Mailjet.APIKeyConfiguration({
+    apiKey: process.env.MAILJET_API_KEY,
+    apiSecret: process.env.MAILJET_API_SECRET
+});
 const {v4: uuidv4} = require('uuid');
 
 module.exports = {
