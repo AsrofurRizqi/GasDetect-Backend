@@ -9,6 +9,13 @@ const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const NodeMailer = require('nodemailer');
+const mailjet = require('node-mailjet').APIKeyConfiguration({
+    apiKey: process.env.MAILJET_API_KEY,
+    secretKey: process.env.MAILJET_SECRET_KEY,
+    url: 'api.mailjet.com',
+    version: 'v3.1',
+    perform_api_call: true
+});
 const {v4: uuidv4} = require('uuid');
 
 module.exports = {
@@ -79,8 +86,6 @@ module.exports = {
                 nomor3: '0'
             });
 
-            const mailjet = require('node-mailjet')
-                .connect(process.env.MAILJET_API_KEY, process.env.MAILJET_SECRET_KEY);
             const request = mailjet
                 .post("send", { 'version': 'v3.1' })
                 .request({
