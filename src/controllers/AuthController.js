@@ -140,7 +140,8 @@ module.exports = {
                 <center>
         </html>`
                         }
-                    ]
+                    ],
+                    "SandboxMode": true
                 });
             
             request
