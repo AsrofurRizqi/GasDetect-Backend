@@ -143,27 +143,13 @@ module.exports = {
                     ]
                 });
             
-            try {
-                const result = await request;
-                console.log(result);
-                return {
-                    status: 200,
-                    message: 'Account created, please verify your email'
-                };
-            } catch (err) {
-                console.log(err);
-                if (err.statusCode === 400) {
-                    return {
-                        status: 500,
-                        message: 'Email not valid'
-                    };
-                } else {
-                    return {
-                        status: 500,
-                        message: err.message
-                    };
-                }
-            }
+            request
+                .then((result) => {
+                    console.log(result.body)
+                })
+                .catch((err) => {
+                    console.log(err.statusCode)
+                });
 
             
         } catch (e) {
