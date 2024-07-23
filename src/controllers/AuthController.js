@@ -145,11 +145,13 @@ module.exports = {
             
             try {
                 const result = await request;
+                console.log(result.body);
                 return {
                     status: 200,
                     message: 'Account created, please verify your email'
                 };
             } catch (err) {
+                console.log(err);
                 if (err.statusCode === 400) {
                     return {
                         status: 500,
