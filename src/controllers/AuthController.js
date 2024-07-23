@@ -145,7 +145,7 @@ module.exports = {
             
             try {
                 const result = await request;
-                console.log(result.body);
+                console.log(result);
                 return {
                     status: 200,
                     message: 'Account created, please verify your email'
