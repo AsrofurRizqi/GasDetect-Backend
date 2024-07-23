@@ -146,7 +146,11 @@ module.exports = {
             
             request
                 .then((result) => {
-                    console.log(result.body)
+                    return res.status(200).json({
+                        status: 200,
+                        message: 'User created',
+                        data: result
+                    });
                 })
                 .catch((err) => {
                     console.log(err.statusCode)
