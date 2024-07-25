@@ -5,19 +5,14 @@ const {
     nomor
 } = require('../models');
 
+const axios = require('axios');
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const NodeMailer = require('nodemailer');
-const Mailjet = require('node-mailjet');
-const mailjet = Mailjet.apiConnect(
-    process.env.MAILJET_API_KEY,
-    process.env.MAILJET_SECRET_KEY,
-    {
-      config: {},
-      options: {}
-    } 
-);
+const formData = require('form-data');
+const Mailgun = require('mailgun.js');
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_APIKEY});
 const {v4: uuidv4} = require('uuid');
 
 module.exports = {
@@ -25,15 +20,17 @@ module.exports = {
         const {
             nama, 
             email, 
+            phone,
             password, 
-            repassword
+            repassword,
+            qr_code
         } = req.body;
 
         try {
-            if (nama === '' || email === '' || password === '' || repassword === '') {
+            if (nama === '' || email === '' || password === '' || repassword === '' || phone === '' || qr_code === '') {
                 return res.status(400).json({
                     status: 400,
-                    message: 'Please fill all field'
+                    message: 'All field is required'
                 });
             }
             if (password !== repassword) {
@@ -58,7 +55,7 @@ module.exports = {
         if (checkuser) {
             return res.status(400).json({
                 status: 400,
-                message: 'Email already used'
+                message: 'Account already exist'
             });
         }
 
@@ -77,86 +74,116 @@ module.exports = {
                 is_activated: false,
                 avatar: '',
                 role: 'user',
-                phone: '0',
+                phone: phone
             });
 
             await nomor.create({
                 id: uuidv4(),
                 userId: createUser.id,
-                nomor1: '0',
+                nomor1: phone,
                 nomor2: '0',
                 nomor3: '0'
             });
 
-            const request = mailjet
-                .post("send", { 'version': 'v3.1' })
-                .request({
-                    Messages: [
-                        {
-                            From: {
-                                Email: process.env.EMAIL,
-                                Name: "Kuro Gas Detect"
-                            },
-                            To: [
-                                {
-                                    Email: email,
-                                    Name: nama
-                                }
-                            ],
-                            Subject: "Verify Account Email",
-                            HTMLPart: `<!DOCTYPE html>
-        <html>
-            <center> 
-                <h1>Email Verification For User Account ${nama}</h1>
-                <p>Click this link to verify your email, valid for 2 hours</p>
-                <div>
-                    <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
-                </div>
-                <button 
-                    style=
-                    "
-                    border: none;
-                    transition-duration: 0.4s;
-                    cursor: pointer;
-                    background-color: #76b5c3;
-                    margin-top: 20px;
-                    border-radius: 12px;
-                    "
-                    type="button"
-                > 
-                    <a 
-                    style=
-                    "
-                    text-decoration: none;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    font-size: 16px;
-                    margin: 4px 2px;color: white;
-                    padding: 10px 32px;
-                    transition-duration: 0.4s;" 
-                    href='${process.env.BASE_URL}api/auth/verify/${token}'>Verify Email</a>
-                </button>
-                <center>
-        </html>`
-                        }
-                    ],
-                    "SandboxMode": true
-                });
+            const emailHtml = `<!DOCTYPE html>
+            <html>
+                <center> 
+                    <h1>Email Verification For User Account ${nama}</h1>
+                    <p>Click this link to verify your email, valid for 2 hours</p>
+                    <div>
+                        <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
+                    </div>
+                    <button 
+                        style="
+                        border: none;
+                        transition-duration: 0.4s;
+                        cursor: pointer;
+                        background-color: #76b5c3;
+                        margin-top: 20px;
+                        border-radius: 12px;
+                        "
+                        type="button"
+                    > 
+                        <a 
+                        style="
+                        text-decoration: none;
+                        text-align: center;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 16px;
+                        margin: 4px 2px;
+                        color: white;
+                        padding: 10px 32px;
+                        transition-duration: 0.4s;" 
+                        href='${process.env.BASE_URL}api/auth/verify/${token}'>Verify Email</a>
+                    </button>
+                    <center>
+            </html>`;
             
-            request
-                .then((result) => {
+            try {
+                await mg.messages.create('mg.kuroshop.my.id', {
+                    from: "Kuro Gas Detect <mailgun@mg.kuroshop.my.id>",
+                    to: [email],
+                    subject: "Verify Account Email",
+                    text: "Click the link to verify your email",
+                    html: emailHtml
+                });
+            } catch (err) {
+                console.log(err);
+                return res.status(500).json({
+                    status: 500,
+                    message: 'Failed to send verification email'
+                });
+            }
+
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+            try {
+                await delay(5000);
+                const responseCheck = await axios.get(`https://api.mailgun.net/v3/mg.kuroshop.my.id/events`, {
+                    auth: {
+                        username: 'api',
+                        password: process.env.MAILGUN_APIKEY
+                    },
+                    params: {
+                        'limit': 4,
+                        'recipient': email,
+                        'event': 'failed',
+                        'ascending': 'no'
+                    }
+                });
+        
+                if (responseCheck.data.items.length === 0) {
                     return res.status(200).json({
                         status: 200,
-                        message: 'User created',
-                        data: result
+                        message: 'Account created, please verify your email'
                     });
-                })
-                .catch((err) => {
-                    console.log(err.statusCode)
-                });
+                } else {
+                    await user.destroy({
+                        where: {
+                            id: createUser.id
+                        }
+                    });
 
-            
+                    await nomor.destroy({
+                        where: {
+                            userId: createUser.id
+                        }
+                    });
+
+                    return res.status(400).json({
+                        status: 400,
+                        message: 'Email not accepted or not valid'
+                    });
+                }
+            } catch (e) {
+                console.log(e);
+                return res.status(500).json({
+                    status: 500,
+                    message: 'Failed to check email status'
+                });
+            }
+
         } catch (e) {
             console.log(e)
             return res.status(500).json({
@@ -312,68 +339,62 @@ module.exports = {
 
         const token = jwt.sign({email: email}, process.env.JWT_SECRET, {expiresIn: '2h'});
 
-        const transporter = NodeMailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
+        const emailHtml = `<!DOCTYPE html> 
+        <html>
+            <center> 
+                <h1>Reset Password For ${checkuser.username}</h1>
+                <p>Click this link to reset your password, valid for 2 hours</p>
+                <div>
+                    <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="310" height="85">
+                </div>
+                <button 
+                    style=
+                    "
+                    border: none;
+                    transition-duration: 0.4s;
+                    cursor: pointer;
+                    background-color: #76b5c3;
+                    margin-top: 20px;
+                    border-radius: 12px;
+                    "
+                    type="button"
+                > 
+                    <a 
+                    style=
+                    "
+                    text-decoration: none;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;color: white;
+                    padding: 10px 32px;
+                    transition-duration: 0.4s;" 
+                    href='${process.env.BASE_URL}api/auth/reset/${token}'>Reset Password</a>
+                </button>
+                <center>
+        </html>`
 
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: email,
-            subject: 'Reset Password Gas Detect',
-            html: `<!DOCTYPE html> 
-<html>
-    <center> 
-        <h1>Reset Password For ${checkuser.name}</h1>
-        <p>Click this link to reset your password, valid for 2 hours</p>
-        <div>
-            <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1691564307/sobermart/sob-logos-1_bnnccj.png" alt="Drown Logo" width="310" height="85">
-        </div>
-        <button 
-            style=
-            "
-            border: none;
-            transition-duration: 0.4s;
-            cursor: pointer;
-            background-color: #76b5c3;
-            margin-top: 20px;
-            border-radius: 12px;
-            "
-            type="button"
-        > 
-            <a 
-            style=
-            "
-            text-decoration: none;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;color: white;
-            padding: 10px 32px;
-            transition-duration: 0.4s;" 
-            href='${process.env.BASE_URL}api/auth/reset/${token}'>Reset Password</a>
-        </button>
-        <center>
-</html>`
-        };
+        try {
+            await mg.messages.create('mg.kuroshop.my.id', {
+                from: "Kuro Gas Detect <mailgun@mg.kuroshop.my.id>",
+                to: [email],
+                subject: "Account Password Reset",
+                text: "Request to reset password",
+                html: emailHtml
+            });
 
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-                return res.status(500).json({
-                    status: 500,
-                    message: err.message
-                });
-            } else {
-                return res.status(200).json({
-                    status: 200,
-                    message: 'Email sent'
-                });
-            }
-        });
+            return res.status(200).json({
+                status: 200,
+                message: 'Reset password email sent'
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                status: 500,
+                message: 'Failed to send reset password email'
+            });
+        }
     },
 
     async pageChangePassword(req, res) {
