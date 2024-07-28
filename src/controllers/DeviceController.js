@@ -22,6 +22,7 @@ module.exports = {
     async addDeviceUser(req, res) {
         const {
             device_name,
+            urlkey
         } = req.body;
 
         const user_id = req.user.id;
@@ -37,6 +38,19 @@ module.exports = {
             return res.status(500).json({
                 status: 500,
                 message: e.message
+            });
+        }
+
+        const checkDuplicate = await device.findOne({
+            where: {
+                urlkey: urlkey
+            }
+        });
+
+        if (checkDuplicate) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device key already used'
             });
         }
 
@@ -91,7 +105,7 @@ module.exports = {
                 deviceNumber: nextNumber,
                 id: uuidv4(),
                 userId: user_id,
-                urlkey: keyRandom(),
+                urlkey: urlkey,
                 active: true
             });
 

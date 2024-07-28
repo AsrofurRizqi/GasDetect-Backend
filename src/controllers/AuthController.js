@@ -27,7 +27,7 @@ module.exports = {
         } = req.body;
 
         try {
-            if (nama === '' || email === '' || password === '' || repassword === '' || phone === '' || qr_code === '') {
+            if (nama === '' || email === '' || password === '' || repassword === '' || phone === '' || qr_code === '' || !nama || !email || !password || !repassword || !phone || !qr_code) {
                 return res.status(400).json({
                     status: 400,
                     message: 'All field is required'
@@ -44,7 +44,15 @@ module.exports = {
                 status: 500,
                 message: e.message
             });
-        }
+        };
+
+        const phoneRegex = /^08[0-9]{10,13}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Phone number not valid'
+            });
+        };
 
         const checkuser = await user.findOne({
             where: {
@@ -57,7 +65,20 @@ module.exports = {
                 status: 400,
                 message: 'Account already exist'
             });
-        }
+        };
+
+        const checkQrCode = await device.findOne({
+            where: {
+                urlkey: qr_code
+            }
+        });
+
+        if (checkQrCode) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device already registered on other account'
+            });
+        };
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
@@ -83,6 +104,15 @@ module.exports = {
                 nomor1: phone,
                 nomor2: '0',
                 nomor3: '0'
+            });
+
+            await device.create({
+                id: uuidv4(),
+                deviceName: 'Device 1',
+                deviceNumber: 1,
+                userId: createUser.id,
+                urlkey: qr_code,
+                active: true
             });
 
             const emailHtml = `<!DOCTYPE html>
@@ -171,6 +201,12 @@ module.exports = {
                         }
                     });
 
+                    await device.destroy({
+                        where: {
+                            userId: createUser.id
+                        }
+                    });
+
                     return res.status(400).json({
                         status: 400,
                         message: 'Email not accepted or not valid'
@@ -201,7 +237,7 @@ module.exports = {
         } = req.body;
 
         try {
-            if (email === '' || password === '') {
+            if (email === '' || password === '' || !email || !password) {
                 return res.status(400).json({
                     status: 400,
                     message: 'Please fill all field'
