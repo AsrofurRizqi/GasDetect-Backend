@@ -245,6 +245,8 @@ module.exports = {
                     Meminta bantuan untuk penanganan kebocoran gas.
                     Tolong segera cek kebocoran gas pada device ${deviceName} dengan status ${status} pada lokasi
                     https://www.google.com/maps?q=${latitude},${longitude}
+                    user : ${req.user.username}
+                    phone : ${req.user.phone}
                     `;
 
                     const messageSecondary = `
@@ -252,6 +254,8 @@ module.exports = {
                     Memanggil pemadam kebakaran untuk penanganan kebocoran gas.
                     pada device ${deviceName} dengan status ${status}.
                     lokasi : https://www.google.com/maps?q=${latitude},${longitude}
+                    user : ${req.user.username}
+                    phone : ${req.user.phone}
                     `;
 
                     await sendMessage(damkarNomor.nomor, message)
@@ -272,6 +276,8 @@ module.exports = {
                     Device ${deviceName} memiliki status ${status}.
                     Tolong segera cek kebocoran gas pada device ${deviceName} dengan status ${status} pada lokasi
                     https://www.google.com/maps?q=${latitude},${longitude}
+                    user : ${req.user.username}
+                    phone : ${req.user.phone}
                     `;
 
                     if (checkNomor.nomor1 !== '0') {
