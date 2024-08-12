@@ -368,7 +368,7 @@ module.exports = {
         const emailHtml = `<!DOCTYPE html>
             <html>
                 <center> 
-                    <h1>Account Has Been Activated By Admin, ${checkuser.nama}</h1>
+                    <h1>Account Has Been Activated By Admin, ${checkuser.username}</h1>
                     <p>Your account has been activated by admin, you can now login to your account</p>
                     <div>
                         <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
@@ -450,7 +450,7 @@ module.exports = {
         const emailHtml = `<!DOCTYPE html>
             <html>
                 <center> 
-                    <h1>Account Has Been Deactivated By Admin, ${checkuser.nama}</h1>
+                    <h1>Account Has Been Deactivated By Admin, ${checkuser.username}</h1>
                     <p>Your account has been deactivated by admin, contact admin for more information</p>
                     <div>
                         <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
