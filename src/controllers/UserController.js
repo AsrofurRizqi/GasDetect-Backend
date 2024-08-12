@@ -10,6 +10,7 @@ const {
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const {v4: uuid} = require('uuid');
+const formData = require('form-data');
 const Mailgun = require('mailgun.js');
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_APIKEY});
