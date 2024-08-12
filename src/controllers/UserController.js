@@ -10,6 +10,9 @@ const {
 const Op = Sequelize.Op;
 const bcrypt = require('bcrypt');
 const {v4: uuid} = require('uuid');
+const Mailgun = require('mailgun.js');
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_APIKEY});
 
 module.exports = {
     async getUserProfile(req, res) {
@@ -361,6 +364,33 @@ module.exports = {
             });
         }
 
+        const emailHtml = `<!DOCTYPE html>
+            <html>
+                <center> 
+                    <h1>Account Has Been Activated By Admin, ${checkuser.nama}</h1>
+                    <p>Your account has been activated by admin, you can now login to your account</p>
+                    <div>
+                        <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
+                    </div>
+                <center>
+            </html>`;
+        
+        try {
+            await mg.messages.create('mg.kuroshop.my.id', {
+                from: "Kuro Gas Detect <mailgun@mg.kuroshop.my.id>",
+                to: [checkuser.email],
+                subject: "Account Activated",
+                text: "Account Activated",
+                html: emailHtml
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                status: 500,
+                message: 'Failed to send email'
+            });
+        }
+
         try {
             await user.update({
                 is_activated: true
@@ -413,6 +443,33 @@ module.exports = {
             return res.status(400).json({
                 status: 400,
                 message: 'User not found'
+            });
+        }
+
+        const emailHtml = `<!DOCTYPE html>
+            <html>
+                <center> 
+                    <h1>Account Has Been Deactivated By Admin, ${checkuser.nama}</h1>
+                    <p>Your account has been deactivated by admin, contact admin for more information</p>
+                    <div>
+                        <img src="https://res.cloudinary.com/dkxt6mlnh/image/upload/v1715693998/ta/tfohwr0b93k82g389azl.png" alt="Drown Logo" width="452" height="115">
+                    </div>
+                <center>
+            </html>`;
+        
+        try {
+            await mg.messages.create('mg.kuroshop.my.id', {
+                from: "Kuro Gas Detect <mailgun@mg.kuroshop.my.id>",
+                to: [checkuser.email],
+                subject: "Account Deactivated",
+                text: "Account Deactivated",
+                html: emailHtml
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                status: 500,
+                message: 'Failed to send email'
             });
         }
 
