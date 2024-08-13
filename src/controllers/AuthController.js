@@ -112,7 +112,8 @@ module.exports = {
                 deviceNumber: 1,
                 userId: createUser.id,
                 urlkey: qr_code,
-                active: true
+                active: true,
+                interval: 10
             });
 
             const emailHtml = `<!DOCTYPE html>

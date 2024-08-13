@@ -106,7 +106,8 @@ module.exports = {
                 id: uuidv4(),
                 userId: user_id,
                 urlkey: urlkey,
-                active: true
+                active: true,
+                interval: 10
             });
 
             return res.status(201).json({
@@ -552,6 +553,72 @@ module.exports = {
             return res.status(200).json({
                 status: 200,
                 message: 'Success enable device'
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({
+                status: 500,
+                message: "Internal server error"
+            });
+        }
+    },
+
+    async changeIntervalDevice(req, res) {
+        const {
+            interval
+        } = req.body;
+
+        const user_id = req.user.id;
+        const device_id = req.params.device_id;
+
+        try {
+            if (device_id === '' || interval === '') {
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Please fill all field'
+                });
+            }
+        } catch (e) {
+            return res.status(500).json({
+                status: 500,
+                message: e.message
+            });
+        }
+
+        const checkdevice = await device.findOne({
+            where: {
+                id: device_id,
+                userId: user_id
+            }
+        });
+
+        if (!checkdevice) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Device not found'
+            });
+        }
+
+        if (interval < 5 || interval > 30 || interval % 5 !== 0) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Interval must be between 5 and 30 with step 5'
+            });
+        }
+
+        try {
+            await device.update({
+                interval: interval
+            }, {
+                where: {
+                    id: device_id,
+                    userId: user_id
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Success change interval'
             });
         } catch (e) {
             console.log(e);

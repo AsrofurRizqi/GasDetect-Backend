@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     deviceNumber: DataTypes.INTEGER,
     deviceName: DataTypes.STRING,
     active: DataTypes.BOOLEAN,
-    urlkey: DataTypes.STRING
+    urlkey: DataTypes.STRING,
+    interval: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'device',
