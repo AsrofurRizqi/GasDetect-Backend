@@ -583,23 +583,12 @@ module.exports = {
 
     async checkUserFromUrlkeyDevice(req, res) {
         try {
-            const user_id = req.device.userId;
-
-            const checkUser = await user.findOne({
-                where: {
-                    id: user_id
-                }
-            });
-
-            if (!checkUser) {
-                return res.status(400).json({
-                    status: 400,
-                    message: 'User not found'
-                });
-            }
+            const username = req.user.username;
+            const interval = req.device.interval;
 
             return res.status(200).json({
-                user: checkUser.username
+                user: username,
+                interval: interval
             });
         } catch (e) {
             return res.status(500).json({
